@@ -1,446 +1,414 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="w_netvisus">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>W_NETVISUS • Go Deep into your network visibility</title>
 
-  <meta name="description" content="W_NETVISUS is a modern network scanner with a 3D-like network map and visual SONAR. Raw TCP/UDP scanning, OS/service detection, modern PyQt GUI." />
-  <meta name="theme-color" content="#0b0f16" />
+  <meta name="description" content="W_NETVISUS — network visibility scanner with a modern GUI, 3D-like network map and visual SONAR. Raw TCP/UDP scanning, OS/service fingerprints." />
+  <meta name="theme-color" content="#0B0705" />
 
   <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
 
-  <!-- ✅ Framework: Bootstrap 5.3 (CDN) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Tailwind Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ✅ UI-kit: daisyUI via CDN (CSS + themes) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/5.1.25/daisyui.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/5.1.25/themes.css" />
 
   <style>
+    /* Custom daisyUI theme: warm charcoal + gold (NO blue tint) */
+    [data-theme="w_netvisus"]{
+      /* daisyUI tokens: https://daisyui.com/docs/themes/ */
+      --p: 40% 0.06 70;      /* primary (gold-ish, HSL-ish under the hood) */
+      --pc: 0% 0 0;          /* primary content */
+      --s: 40% 0.04 70;      /* secondary */
+      --sc: 0% 0 0;
+      --a: 40% 0.08 70;      /* accent */
+      --ac: 0% 0 0;
+
+      --n: 18% 0.02 40;      /* neutral */
+      --nc: 98% 0.01 80;     /* neutral content */
+
+      --b1: 98% 0 0;         /* base-1 (light) */
+      --b2: 96% 0 0;         /* base-2 */
+      --b3: 92% 0 0;         /* base-3 */
+      --bc: 15% 0.02 40;     /* base content */
+
+      --in: 70% 0.08 220;    /* info */
+      --su: 65% 0.10 150;    /* success */
+      --wa: 80% 0.12 80;     /* warning */
+      --er: 65% 0.18 25;     /* error */
+
+      --rounded-box: 1.25rem;
+      --rounded-btn: 9999px;
+      --rounded-badge: 9999px;
+      --animation-btn: 0.15s;
+      --animation-input: 0.15s;
+      --btn-focus-scale: 0.98;
+      --border-btn: 1px;
+      --tab-border: 1px;
+      --tab-radius: 0.75rem;
+    }
+
+    /* Dark hero palette (warm charcoal, no navy) */
     :root{
-      --bg0:#070a10;
-      --bg1:#0b1020;
-      --panel: rgba(10, 14, 22, .55);
-      --panel2: rgba(10, 14, 22, .35);
-      --line: rgba(255,255,255,.10);
-      --line2: rgba(255,255,255,.14);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.70);
-      --muted2: rgba(255,255,255,.55);
-      --gold: #c7a17a;
-      --gold2:#e1c39a;
-      --radius: 999px;
-      --radius2: 20px;
+      --hero0: #0B0705;
+      --hero1: #16100C;
+      --gold:  #C7A17A;
+      --gold2: #E1C39A;
     }
 
-    html{scroll-behavior:smooth}
-    body{
-      background: radial-gradient(1200px 700px at 20% 10%, rgba(199,161,122,.12), transparent 60%),
-                  radial-gradient(1000px 700px at 80% 20%, rgba(199,161,122,.08), transparent 60%),
-                  linear-gradient(180deg, var(--bg1), var(--bg0));
-      overflow-x:hidden;
-    }
+    html { scroll-behavior: smooth; }
 
-    /* Topbar */
-    .topbar{
-      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .topbar a{
-      color: var(--gold2);
-      text-decoration: none;
-      border-bottom:1px dotted rgba(225,195,154,.6);
-    }
-    .topbar a:hover{ color: #fff; border-bottom-color: rgba(255,255,255,.45); }
-
-    /* Header */
-    .site-header{
-      position: sticky;
-      top:0;
-      z-index:50;
-      backdrop-filter: blur(14px);
-      background: rgba(7,10,16,.55);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-
-    .brand img{
-      width:44px; height:44px;
-      object-fit:contain;
-      filter: drop-shadow(0 6px 18px rgba(0,0,0,.55));
-    }
-    .brand small{ color: var(--muted2); }
-
-    /* Buttons (Bootstrap-based) */
-    .btn-pill{
-      border-radius: var(--radius) !important;
-      padding: .6rem 1rem;
-      font-weight: 700;
-    }
-    .btn-gold{
-      border: 1px solid rgba(199,161,122,.55);
-      background: linear-gradient(180deg, rgba(199,161,122,.22), rgba(199,161,122,.10));
-      color: rgba(255,255,255,.92);
-    }
-    .btn-gold:hover{
-      background: linear-gradient(180deg, rgba(199,161,122,.28), rgba(199,161,122,.12));
-      color: #fff;
-      transform: translateY(-1px);
-    }
-    .btn-outline-soft{
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.04);
-      color: rgba(255,255,255,.92);
-    }
-    .btn-outline-soft:hover{
-      background: rgba(255,255,255,.06);
-      color: #fff;
-      transform: translateY(-1px);
-    }
-
-    /* Hero */
-    .hero{
-      position:relative;
-      min-height: 640px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      color: var(--text);
-    }
-    .hero::before{
-      content:"";
-      position:absolute; inset:-2px;
+    /* Hero background: warm charcoal + gold glow + subtle grid */
+    .hero-bg{
+      position: relative;
+      overflow: hidden;
       background:
-        radial-gradient(800px 520px at 25% 25%, rgba(199,161,122,.10), transparent 60%),
-        radial-gradient(900px 600px at 75% 35%, rgba(199,161,122,.08), transparent 62%),
-        linear-gradient(180deg, rgba(9,12,18,.80), rgba(7,10,16,.95));
-      z-index:-2;
+        radial-gradient(1200px 700px at 18% 10%, rgba(199,161,122,.18), transparent 62%),
+        radial-gradient(1000px 700px at 82% 18%, rgba(199,161,122,.12), transparent 60%),
+        radial-gradient(900px 520px at 50% 100%, rgba(199,161,122,.06), transparent 60%),
+        linear-gradient(180deg, var(--hero1), var(--hero0));
+      border-bottom: 1px solid rgba(255,255,255,.08);
     }
-    .hero::after{
+    .hero-bg::after{
       content:"";
       position:absolute; inset:0;
-      opacity:.20;
-      background-image:
-        radial-gradient(circle at 10px 10px, rgba(255,255,255,.20) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.10) 1px, transparent 1px),
-        linear-gradient(0deg, rgba(255,255,255,.08) 1px, transparent 1px);
-      background-size: 42px 42px, 210px 210px, 210px 210px;
-      mask-image: radial-gradient(700px 400px at 30% 35%, black, transparent 75%);
       pointer-events:none;
-      z-index:-1;
+      opacity:.16;
+      background-image:
+        radial-gradient(circle at 10px 10px, rgba(255,255,255,.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.09) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,.07) 1px, transparent 1px);
+      background-size: 44px 44px, 220px 220px, 220px 220px;
+      mask-image: radial-gradient(780px 460px at 30% 35%, black, transparent 75%);
     }
 
-    .kicker{
-      color: var(--muted2);
-      font-weight:700;
-      font-size: 13px;
-      letter-spacing:.4px;
-    }
-    .hero h1{
-      margin: 14px 0 0;
-      font-size: clamp(40px, 4.8vw, 76px);
-      line-height: .98;
-      letter-spacing: -1px;
-    }
-    .accent{ color: rgba(199,161,122,.95); }
-    .lead{
-      margin-top: 18px;
-      max-width: 640px;
-      font-size: 16.5px;
-      line-height: 1.6;
-      color: var(--muted);
-    }
-    .hero-note{
-      margin-top: 14px;
-      color: var(--muted2);
-      font-size: 12.5px;
+    /* Sticky header background (warm, not blue) */
+    .header-glass{
+      background: rgba(11,7,5,.62);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
     }
 
-    .hero-art{
-      position:relative;
-      min-height: 360px;
-    }
-    .hero-art .glow{
-      position:absolute;
-      inset:0;
-      margin:auto;
-      width: 520px; height: 520px;
-      background: radial-gradient(circle at 50% 50%, rgba(199,161,122,.20), transparent 62%);
-      filter: blur(6px);
-      opacity:.9;
-    }
-    .hero-art img{
-      width: min(460px, 92%);
-      height:auto;
-      object-fit:contain;
-      filter: drop-shadow(0 28px 60px rgba(0,0,0,.55));
-      transform: rotate(-6deg);
-      opacity:.95;
+    /* “Fin” visual — modern, gold */
+    .fin{
+      width: min(520px, 74vw);
+      height: min(520px, 74vw);
+      background:
+        radial-gradient(closest-side at 35% 35%, rgba(225,195,154,.85), rgba(199,161,122,.28) 58%, rgba(11,7,5,0) 74%),
+        linear-gradient(135deg, rgba(199,161,122,.70), rgba(199,161,122,.08));
+      clip-path: polygon(56% 7%, 78% 18%, 88% 33%, 93% 55%, 83% 76%, 63% 92%, 45% 95%, 56% 7%);
+      filter: drop-shadow(0 25px 60px rgba(0,0,0,.55));
       position: relative;
-      z-index: 1;
+      opacity: .95;
     }
-
-    /* Below fold */
-    .below{
-      background: #f7f7f8;
-      color: #111;
-      padding: 54px 0 80px;
-    }
-    .anchor{ scroll-margin-top: 90px; }
-
-    /* Bootstrap card tweaks */
-    .card{
+    .fin::after{
+      content:"";
+      position:absolute;
+      inset: 11%;
+      border: 1px solid rgba(225,195,154,.28);
       border-radius: 18px;
-      border: 1px solid rgba(16,24,40,.10);
-      box-shadow: 0 10px 24px rgba(0,0,0,.05);
+      opacity: .55;
+      transform: rotate(4deg);
     }
-    .card-btn{
-      border-radius: 999px;
-      border: 1px solid rgba(199,161,122,.55);
-      background: linear-gradient(180deg, rgba(199,161,122,.22), rgba(199,161,122,.10));
-      color:#2b2f36;
-      font-weight:800;
-      padding: .55rem .9rem;
-      display:inline-flex;
-      text-decoration:none;
-    }
-    .card-btn:hover{ filter: brightness(1.05); }
 
-    pre{
-      margin:0;
-      background:#0b0f16;
-      color: rgba(255,255,255,.92);
-      border-radius: 14px;
-      padding: 14px;
-      overflow:auto;
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 18px 40px rgba(0,0,0,.20);
-      font-size: 12.5px;
-      line-height:1.55;
+    /* Anchor offset for sticky header */
+    .anchor { scroll-margin-top: 96px; }
+
+    /* Make daisyUI nav links look more “Wireshark-like” */
+    .navlink{
+      color: rgba(255,255,255,.78);
+    }
+    .navlink:hover{
+      color: rgba(255,255,255,.95);
+      background: rgba(255,255,255,.06);
+    }
+
+    /* Light section background like Wireshark */
+    .below{
+      background: linear-gradient(180deg, #fbfbfc, #f5f6f8);
     }
   </style>
+
+  <script>
+    // Tailwind small config (optional, but nice)
+    tailwind.config = {
+      theme: {
+        extend: {
+          boxShadow: {
+            soft: "0 14px 34px rgba(0,0,0,.06)"
+          }
+        }
+      }
+    }
+  </script>
 </head>
 
-<body>
+<body class="min-h-screen">
 
-  <!-- Topbar (Bootstrap container) -->
-  <div class="topbar">
-    <div class="container position-relative">
-      <div class="d-flex justify-content-center align-items-center gap-2 text-center py-2 flex-wrap">
-        <span><b>W_NETVISUS</b> is in active development.</span>
-        <span>Read the</span>
-        <a href="#documentation">Quick Start</a>
-        <span>or grab a</span>
-        <a href="#download">release</a>
-        <span>when available.</span>
+  <!-- Top announcement bar (daisyUI alert) -->
+  <div class="w-full bg-[#16100C] border-b border-white/10">
+    <div class="mx-auto max-w-6xl px-4 py-2">
+      <div class="alert bg-transparent border-0 text-white/80 py-1 px-0">
+        <span class="text-xs sm:text-sm">
+          <b class="text-white">W_NETVISUS</b> is in active development.
+          Read the <a class="link link-hover text-[var(--gold2)]" href="#documentation">Quick Start</a>
+          or check <a class="link link-hover text-[var(--gold2)]" href="#download">releases</a> when available.
+        </span>
       </div>
     </div>
   </div>
 
-  <!-- Header (Bootstrap navbar) -->
-  <header class="site-header">
-    <nav class="navbar navbar-expand-lg navbar-dark py-2">
-      <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2 brand" href="#top">
-          <img src="./assets/logo.png" alt="W_NETVISUS logo">
-          <div class="d-flex flex-column lh-sm">
-            <b>W_NETVISUS</b>
-            <small>Network scanner • 3D map • Visual SONAR</small>
-          </div>
-        </a>
+  <!-- Header (daisyUI navbar + dropdown) -->
+  <header class="sticky top-0 z-50 header-glass">
+    <div class="mx-auto max-w-6xl px-4 py-3">
+      <div class="navbar px-0">
+        <div class="navbar-start gap-3">
+          <a href="#top" class="flex items-center gap-3">
+            <img src="./assets/logo.png" alt="W_NETVISUS logo" class="h-10 w-10 object-contain drop-shadow" />
+            <div class="leading-tight">
+              <div class="font-extrabold tracking-wide text-white">W_NETVISUS</div>
+              <div class="text-xs text-white/55">Network scanner • 3D map • Visual SONAR</div>
+            </div>
+          </a>
+        </div>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <!-- Desktop menu -->
+        <div class="navbar-center hidden lg:flex">
+          <ul class="menu menu-horizontal px-1 gap-1">
+            <li><a class="navlink rounded-xl" href="#download">Download</a></li>
+            <li><a class="navlink rounded-xl" href="#learn">Learn</a></li>
 
-        <div class="collapse navbar-collapse" id="mainNav">
-          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="#download">Download</a></li>
-            <li class="nav-item"><a class="nav-link" href="#learn">Learn</a></li>
-            <li class="nav-item"><a class="nav-link" href="#resources">Resources</a></li>
-            <li class="nav-item"><a class="nav-link" href="#tools">Tools</a></li>
-            <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
-            <li class="nav-item"><a class="nav-link" href="#develop">Develop</a></li>
+            <li>
+              <details>
+                <summary class="navlink rounded-xl">Resources</summary>
+                <ul class="p-2 bg-[#110C09]/95 border border-white/10 rounded-2xl w-52">
+                  <li><a class="text-white/85 hover:text-white" href="#resources">Overview</a></li>
+                  <li><a class="text-white/85 hover:text-white" href="#documentation">Documentation</a></li>
+                  <li><a class="text-white/85 hover:text-white" href="#support">Support</a></li>
+                </ul>
+              </details>
+            </li>
+
+            <li><a class="navlink rounded-xl" href="#tools">Tools</a></li>
+            <li><a class="navlink rounded-xl" href="#community">Community</a></li>
+            <li><a class="navlink rounded-xl" href="#develop">Develop</a></li>
           </ul>
+        </div>
 
-          <div class="d-flex gap-2">
-            <a class="btn btn-gold btn-pill" href="#download">Download</a>
-            <a class="btn btn-outline-soft btn-pill" href="#support">Support</a>
+        <div class="navbar-end gap-2">
+          <a href="#download" class="btn btn-primary btn-sm sm:btn-md">Download</a>
+          <a href="#support" class="btn btn-outline btn-sm sm:btn-md border-white/25 text-white hover:bg-white/10 hover:border-white/30">Support</a>
+
+          <!-- Mobile menu -->
+          <div class="dropdown dropdown-end lg:hidden">
+            <label tabindex="0" class="btn btn-ghost btn-sm text-white hover:bg-white/10">Menu</label>
+            <ul tabindex="0" class="menu dropdown-content mt-3 p-2 shadow bg-[#110C09]/95 border border-white/10 rounded-2xl w-52">
+              <li><a class="text-white/85 hover:text-white" href="#download">Download</a></li>
+              <li><a class="text-white/85 hover:text-white" href="#learn">Learn</a></li>
+              <li><a class="text-white/85 hover:text-white" href="#resources">Resources</a></li>
+              <li><a class="text-white/85 hover:text-white" href="#documentation">Documentation</a></li>
+              <li><a class="text-white/85 hover:text-white" href="#tools">Tools</a></li>
+              <li><a class="text-white/85 hover:text-white" href="#community">Community</a></li>
+              <li><a class="text-white/85 hover:text-white" href="#develop">Develop</a></li>
+              <li><a class="text-white/85 hover:text-white" href="#support">Support</a></li>
+            </ul>
           </div>
+
         </div>
       </div>
-    </nav>
+    </div>
   </header>
 
-  <!-- Hero (Bootstrap grid) -->
-  <main id="top" class="hero">
-    <div class="container py-5 py-lg-6">
-      <div class="row align-items-center g-5 py-4">
-        <div class="col-lg-7">
-          <div class="kicker">W_NETVISUS • Network Visibility & Port Scanning</div>
-          <h1 class="mb-0">
+  <!-- Hero -->
+  <main id="top" class="hero-bg">
+    <div class="mx-auto max-w-6xl px-4 py-16 lg:py-20">
+      <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
+        <section>
+          <div class="text-xs font-semibold tracking-wide text-white/60">
+            W_NETVISUS • Network Visibility & Port Scanning
+          </div>
+
+          <h1 class="mt-4 text-5xl md:text-6xl font-extrabold tracking-tight leading-[0.95] text-white">
             Go deep into your<br/>
-            <span class="accent">network visibility</span>.
+            <span class="text-[var(--gold2)]">network visibility</span>.
           </h1>
-          <p class="lead">
-            W_NETVISUS is a modern network scanner with a <b>3D-like network map</b> and a <b>visual SONAR</b>.
-            It supports raw TCP/UDP scanning via a C-extension and uses fingerprints for OS/service detection.
+
+          <p class="mt-6 text-white/75 leading-relaxed max-w-xl">
+            W_NETVISUS is a modern network scanner with a <b class="text-white">3D-like network map</b> and a
+            <b class="text-white">visual SONAR</b>. It supports raw TCP/UDP scanning via a C-extension and uses
+            fingerprints for OS/service detection.
           </p>
 
-          <div class="d-flex gap-2 flex-wrap mt-3">
-            <a class="btn btn-gold btn-pill" href="#download">Download Now</a>
-            <a class="btn btn-outline-soft btn-pill" href="#documentation">Documentation</a>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="#download" class="btn btn-primary">Download Now</a>
+            <a href="#documentation" class="btn btn-outline border-white/25 text-white hover:bg-white/10 hover:border-white/30">
+              Documentation
+            </a>
           </div>
 
-          <div class="hero-note">
-            Free for educational use • Documentation-first workflow • Designed in gold tones (VISUS = “eye”)
+          <div class="mt-4 text-xs text-white/55">
+            Free for educational use • Documentation-first workflow • Gold theme (VISUS = “eye”)
           </div>
-        </div>
+        </section>
 
-        <div class="col-lg-5">
-          <div class="hero-art d-flex align-items-center justify-content-center">
-            <div class="glow" aria-hidden="true"></div>
-            <img src="./assets/logo.png" alt="W_NETVISUS visual mark" />
+        <aside class="flex justify-center lg:justify-end">
+          <div class="relative flex items-center justify-center min-h-[360px]">
+            <div class="absolute h-[520px] w-[520px] rounded-full blur-sm opacity-80"
+                 style="background: radial-gradient(circle at 50% 50%, rgba(199,161,122,.22), transparent 62%);"></div>
+            <div class="fin" aria-hidden="true"></div>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   </main>
 
-  <!-- Below fold -->
+  <!-- Below fold (light) -->
   <section class="below">
-    <div class="container">
+    <div class="mx-auto max-w-6xl px-4 py-14">
 
       <!-- Download -->
       <div id="download" class="anchor"></div>
-      <h2 class="display-6 fw-bold">Download</h2>
-      <p class="text-secondary">Access to the latest stable releases (placeholder for Practice 7, real files later).</p>
+      <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Download</h2>
+      <p class="mt-2 text-slate-600">Access to the latest stable releases (placeholder for Practice 7, real files later).</p>
 
-      <div class="row g-3 mt-2">
-        <div class="col-lg-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h3 class="h6 fw-bold mb-2">Releases</h3>
-              <p class="text-secondary mb-3">Stable and previous versions.</p>
-              <a class="card-btn" href="#" aria-label="Download release (placeholder)">Download (placeholder)</a>
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        <div class="card bg-white shadow-soft border border-slate-200">
+          <div class="card-body">
+            <h3 class="card-title text-base">Releases</h3>
+            <p class="text-slate-600">Stable and previous versions.</p>
+            <div class="card-actions mt-2">
+              <a class="btn btn-sm btn-primary" href="#">Download (placeholder)</a>
             </div>
           </div>
         </div>
-        <div class="col-lg-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h3 class="h6 fw-bold mb-2">License</h3>
-              <p class="text-secondary mb-3">Usage and distribution terms.</p>
-              <a class="card-btn" href="#license">View</a>
+
+        <div class="card bg-white shadow-soft border border-slate-200">
+          <div class="card-body">
+            <h3 class="card-title text-base">License</h3>
+            <p class="text-slate-600">Usage and distribution terms.</p>
+            <div class="card-actions mt-2">
+              <a class="btn btn-sm btn-outline border-slate-300 text-slate-800 hover:bg-slate-50" href="#license">View</a>
             </div>
           </div>
         </div>
-        <div class="col-lg-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h3 class="h6 fw-bold mb-2">System Requirements</h3>
-              <p class="text-secondary mb-3">Python + GUI + optional C compiler for raw scanning.</p>
-              <a class="card-btn" href="#requirements">View</a>
+
+        <div class="card bg-white shadow-soft border border-slate-200">
+          <div class="card-body">
+            <h3 class="card-title text-base">System Requirements</h3>
+            <p class="text-slate-600">Python + GUI + optional C compiler for raw scanning.</p>
+            <div class="card-actions mt-2">
+              <a class="btn btn-sm btn-outline border-slate-300 text-slate-800 hover:bg-slate-50" href="#requirements">View</a>
             </div>
           </div>
         </div>
       </div>
 
-      <div id="license" class="anchor mt-4"></div>
-      <div class="card">
+      <div id="license" class="anchor mt-10"></div>
+      <div class="card bg-white shadow-soft border border-slate-200">
         <div class="card-body">
-          <h3 class="h6 fw-bold mb-2">License (placeholder)</h3>
-          <p class="text-secondary mb-0">Add final license text/link here later (MIT / proprietary / etc.).</p>
+          <h3 class="card-title text-base">License (placeholder)</h3>
+          <p class="text-slate-600">Add final license text/link later (MIT / proprietary / etc.).</p>
         </div>
       </div>
 
-      <div id="requirements" class="anchor mt-3"></div>
-      <div class="card">
+      <div id="requirements" class="anchor mt-4"></div>
+      <div class="card bg-white shadow-soft border border-slate-200">
         <div class="card-body">
-          <h3 class="h6 fw-bold mb-2">System Requirements</h3>
-          <p class="text-secondary mb-0">
-            Python 3.9+ recommended. PyQt5 GUI. Raw scanning may need elevated permissions.
-            Optional: C compiler if you rebuild the extension.
-          </p>
+          <h3 class="card-title text-base">System Requirements</h3>
+          <ul class="mt-2 list-disc pl-5 text-slate-600 space-y-1">
+            <li>Python 3.9+ recommended</li>
+            <li>PyQt5 GUI</li>
+            <li>netifaces</li>
+            <li>Raw scanning may require elevated permissions</li>
+          </ul>
         </div>
       </div>
 
       <!-- Documentation -->
-      <div id="documentation" class="anchor mt-5"></div>
-      <h2 class="display-6 fw-bold">Documentation</h2>
-      <p class="text-secondary">Quick Start + usage guidance (real commands from your repository).</p>
+      <div id="documentation" class="anchor mt-14"></div>
+      <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Documentation</h2>
+      <p class="mt-2 text-slate-600">Quick Start + usage guidance (commands from your repository).</p>
 
-      <div class="row g-3">
-        <div class="col-lg-7">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="h6 fw-bold mb-2">Quick Start</h3>
-              <p class="text-secondary mb-2">Install dependencies:</p>
-              <pre>pip install PyQt5 netifaces</pre>
+      <div class="mt-8 grid gap-4 lg:grid-cols-3">
+        <div class="lg:col-span-2 card bg-white shadow-soft border border-slate-200">
+          <div class="card-body">
+            <h3 class="card-title text-base">Quick Start</h3>
 
-              <p class="text-secondary mt-3 mb-2">Run from project root:</p>
-              <pre>. venv/bin/activate
+            <div class="mt-3">
+              <div class="text-xs font-semibold text-slate-500">Install dependencies</div>
+              <pre class="mt-2 rounded-2xl bg-[#0B0705] text-white/90 border border-black/10 p-4 overflow-auto text-xs leading-relaxed">pip install PyQt5 netifaces</pre>
+            </div>
+
+            <div class="mt-4">
+              <div class="text-xs font-semibold text-slate-500">Run from project root</div>
+              <pre class="mt-2 rounded-2xl bg-[#0B0705] text-white/90 border border-black/10 p-4 overflow-auto text-xs leading-relaxed">. venv/bin/activate
 sudo PYTHONPATH=. python3 python_wrapper/scanner_gui_modern.py</pre>
+            </div>
 
-              <p class="text-secondary mt-2 mb-0">
-                Note: <b>sudo</b> may be required for raw packet scanning (depending on OS and mode).
-              </p>
+            <div class="mt-3 text-sm text-slate-600">
+              Note: <b>sudo</b> may be required for raw packet scanning (depending on OS and mode).
             </div>
           </div>
         </div>
 
-        <div class="col-lg-5">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="h6 fw-bold mb-2">What you get</h3>
-              <p class="text-secondary">Fast scan + clear visuals.</p>
-              <ul class="text-secondary mb-0">
-                <li>Raw TCP SYN / UDP scanning via C-extension (<code>core/raw_scan.c</code>)</li>
-                <li>OS & service detection using fingerprints in <code>data/</code></li>
-                <li>Modern PyQt5 GUI: <code>python_wrapper/scanner_gui_modern.py</code></li>
-                <li>3D-like network map + SONAR widget</li>
-              </ul>
-            </div>
+        <div class="card bg-white shadow-soft border border-slate-200">
+          <div class="card-body">
+            <h3 class="card-title text-base">What you get</h3>
+            <ul class="mt-2 list-disc pl-5 text-slate-600 space-y-1">
+              <li>Raw TCP SYN / UDP scanning via C-extension (<code>core/raw_scan.c</code>)</li>
+              <li>OS/service detection with fingerprints (<code>data/</code>)</li>
+              <li>Modern PyQt5 GUI (<code>python_wrapper/scanner_gui_modern.py</code>)</li>
+              <li>3D-like network map + SONAR widget</li>
+            </ul>
           </div>
         </div>
       </div>
 
-      <!-- Anchors to match menu -->
-      <div id="learn" class="anchor mt-5"></div>
-      <h2 class="display-6 fw-bold">Learn</h2>
-      <p class="text-secondary">What W_NETVISUS is and which tasks it solves in real networks.</p>
+      <!-- Learn / Resources / Tools / Community / Develop -->
+      <div id="learn" class="anchor mt-14"></div>
+      <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Learn</h2>
+      <p class="mt-2 text-slate-600">What W_NETVISUS is and which tasks it solves in real networks.</p>
 
-      <div id="resources" class="anchor mt-5"></div>
-      <h2 class="display-6 fw-bold">Resources</h2>
-      <p class="text-secondary">Project links: repository, changelog, releases.</p>
+      <div id="resources" class="anchor mt-14"></div>
+      <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Resources</h2>
+      <p class="mt-2 text-slate-600">Repository, changelog, and releases.</p>
 
-      <div id="tools" class="anchor mt-5"></div>
-      <h2 class="display-6 fw-bold">Tools</h2>
-      <p class="text-secondary">Planned utilities: export formats, presets, reporting (placeholder).</p>
+      <div id="tools" class="anchor mt-14"></div>
+      <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Tools</h2>
+      <p class="mt-2 text-slate-600">Planned utilities: export formats, presets, reporting (placeholder).</p>
 
-      <div id="community" class="anchor mt-5"></div>
-      <h2 class="display-6 fw-bold">Community</h2>
-      <p class="text-secondary">User feedback and future public documentation (placeholder).</p>
+      <div id="community" class="anchor mt-14"></div>
+      <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Community</h2>
+      <p class="mt-2 text-slate-600">User feedback and public documentation (placeholder).</p>
 
-      <div id="develop" class="anchor mt-5"></div>
-      <h2 class="display-6 fw-bold">Develop</h2>
-      <p class="text-secondary">Build notes, contributing, packaging (placeholder).</p>
+      <div id="develop" class="anchor mt-14"></div>
+      <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Develop</h2>
+      <p class="mt-2 text-slate-600">Build notes, contributing, packaging (placeholder).</p>
 
-      <div id="support" class="anchor mt-5"></div>
-      <h2 class="display-6 fw-bold">Support</h2>
-      <p class="text-secondary mb-4">Email: <b>your-email@example.com</b></p>
+      <div id="support" class="anchor mt-14"></div>
+      <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Support</h2>
+      <p class="mt-2 text-slate-600">Email: <b>your-email@example.com</b></p>
 
-      <a class="btn btn-outline-dark btn-pill" href="#top">Back to top</a>
+      <div class="mt-10">
+        <a href="#top" class="btn btn-outline border-slate-300 text-slate-900 hover:bg-slate-50">Back to top</a>
+      </div>
+
     </div>
   </section>
 
-  <footer class="py-4" style="background:#f7f7f8;color:#6a717d;border-top:1px solid rgba(16,24,40,.10);">
-    <div class="container d-flex justify-content-between flex-wrap gap-2">
-      <div>© W_NETVISUS — Website foundation (Practice 7)</div>
-      <div>Bootstrap 5.3 (CDN) • Wireshark-like structure • Gold theme</div>
+  <footer class="border-t border-slate-200 bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-10 text-sm text-slate-600 flex flex-col gap-2 sm:flex-row sm:justify-between">
+      <span>© W_NETVISUS — Website foundation (Practice)</span>
+      <span>Tailwind (CDN) + daisyUI (UI-kit) • Gold theme • GitHub Pages</span>
     </div>
   </footer>
 
-  <!-- ✅ Bootstrap JS bundle (for navbar toggler) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
