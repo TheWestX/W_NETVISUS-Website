@@ -85,8 +85,12 @@
     }
 
     .topbar{
-      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-      border-bottom: 1px solid rgba(255,255,255,.08);
+        background: linear-gradient(
+            180deg,
+            rgba(11,7,5,.85),
+            rgba(11,7,5,.65)
+        );
+        border-bottom: 1px solid rgba(255,255,255,.08);
     }
 
     .hero-bg{
@@ -203,10 +207,17 @@
 
     .footerline{ border-top: 1px solid rgba(15,23,42,.10); }
 
-    /* Small “pill” tags */
     .tag{
       border: 1px solid rgba(15,23,42,.12);
       background: rgba(255,255,255,.70);
+    }
+
+    .steps .step-primary::after {
+    background-color: var(--gold) !important;
+    color: #1b130e !important;
+    }
+    .steps .step-primary::before {
+    background-color: var(--gold) !important;
     }
   </style>
 </head>
