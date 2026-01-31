@@ -3,369 +3,423 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>W_NETVISUS — Network Visibility & Port Scanning</title>
+  <title>W_NETVISUS · Go Deep</title>
 
-  <!-- Tailwind (CDN) — no build step required -->
+  <!-- Tailwind config BEFORE CDN -->
+  <script>
+    tailwind = {
+      config: {
+        theme: {
+          extend: {
+            colors: {
+              bg0: "#070B12",
+              bg1: "#0B1220",
+              line: "#1E293B",
+              text0: "#E6EDF7",
+              text1: "#B8C4D6",
+              gold: "#C7A17A",
+              gold2: "#E6C9A8"
+            },
+            boxShadow: {
+              soft: "0 16px 50px rgba(0,0,0,.45)"
+            }
+          }
+        }
+      }
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <meta name="description" content="W_NETVISUS — a network visibility and port scanning tool. Documentation-first, download-first, built for professionals." />
+  <meta name="description" content="W_NETVISUS — modern network scanner with 3D network map and visual SONAR." />
+  <meta name="theme-color" content="#070B12" />
   <link rel="icon" type="image/png" href="./assets/logo.png" />
-  <meta name="theme-color" content="#020617" />
 
   <style>
-    /* small, functional motion — similar philosophy to technical sites */
     html { scroll-behavior: smooth; }
-    .glass { background: rgba(2, 6, 23, 0.72); backdrop-filter: blur(10px); }
+
+    /* Wireshark-ish: dark, calm, geometric highlights */
+    .hero-bg{
+      background:
+        radial-gradient(900px 520px at 18% 10%, rgba(199,161,122,.18), transparent 60%),
+        radial-gradient(900px 520px at 85% 30%, rgba(199,161,122,.10), transparent 62%),
+        linear-gradient(to bottom, #070B12, #070B12);
+    }
+
+    .glass{
+      background: rgba(7,11,18,.72);
+      backdrop-filter: blur(10px);
+    }
   </style>
 </head>
 
-<body class="bg-slate-950 text-slate-100 antialiased">
-  <!-- Top bar (like a technical site: subtle, calm) -->
-  <div class="border-b border-slate-800 bg-slate-950">
-    <div class="mx-auto max-w-6xl px-4 py-2 text-xs text-slate-400 flex items-center justify-between">
-      <span>W_NETVISUS • Network visibility & port scanning</span>
-      <span class="hidden sm:inline">Docs-first • Download-first • Professional UX</span>
+<body class="bg-bg0 text-text0 antialiased">
+  <!-- Top info bar (like Wireshark announcement strip) -->
+  <div class="border-b border-line bg-bg1/35">
+    <div class="mx-auto max-w-6xl px-4 py-2 text-xs text-text1 flex items-center justify-between gap-3">
+      <div class="truncate">
+        Official website of <span class="text-text0 font-semibold">W_NETVISUS</span>. Documentation-first, download-first.
+      </div>
+      <a href="#documentation" class="hidden sm:inline text-gold hover:text-gold2 transition-colors">
+        Documentation →
+      </a>
     </div>
   </div>
 
   <!-- Header -->
-  <header class="sticky top-0 z-50 border-b border-slate-800 glass">
+  <header class="sticky top-0 z-50 border-b border-line glass">
     <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-4">
       <!-- Brand -->
-      <a href="#top" class="flex items-center gap-3 group">
-        <!-- Real logo -->
-        <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900/40 overflow-hidden">
+      <a href="#top" class="flex items-center gap-3">
+        <!-- REAL logo: no background, no border, no padding => no "whitening" -->
         <img
-            src="./assets/logo.png"
-            alt="W_NETVISUS logo"
-            class="h-full w-full object-contain p-1"
-            loading="eager"
+          src="./assets/logo.png"
+          alt="W_NETVISUS logo"
+          class="h-10 w-10 object-contain"
+          loading="eager"
         />
-        </span>
-
         <div class="leading-tight">
-          <div class="font-semibold tracking-wide text-slate-100 group-hover:text-white transition-colors">W_NETVISUS</div>
-          <div class="text-xs text-slate-400">Visibility • Scanning • Control</div>
+          <div class="font-semibold tracking-wide">W_NETVISUS</div>
+          <div class="text-xs text-text1">Network scanner · 3D map · Visual SONAR</div>
         </div>
       </a>
 
       <!-- Nav -->
-      <nav class="hidden lg:flex items-center gap-6 text-sm text-slate-300">
-        <a href="#download" class="hover:text-white transition-colors">Download</a>
-        <a href="#documentation" class="hover:text-white transition-colors">Documentation</a>
-        <a href="#learn" class="hover:text-white transition-colors">Learn</a>
-        <a href="#resources" class="hover:text-white transition-colors">Resources</a>
-        <a href="#contacts" class="hover:text-white transition-colors">Contacts</a>
+      <nav class="hidden lg:flex items-center gap-6 text-sm text-text0/90">
+        <a href="#download" class="hover:text-text0 transition-colors">Download</a>
+        <a href="#documentation" class="hover:text-text0 transition-colors">Documentation</a>
+        <a href="#learn" class="hover:text-text0 transition-colors">Learn</a>
+        <a href="#resources" class="hover:text-text0 transition-colors">Resources</a>
+        <a href="#contacts" class="hover:text-text0 transition-colors">Contacts</a>
       </nav>
 
-      <!-- CTA -->
+      <!-- Actions -->
       <div class="flex items-center gap-3">
         <a href="#download"
-           class="rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-400 active:bg-blue-600 transition-colors">
+           class="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-bg0 hover:bg-gold2 transition-colors">
           Download
         </a>
+        <a href="#support"
+           class="hidden sm:inline-flex rounded-full border border-gold/60 bg-gold/10 px-4 py-2 text-sm font-semibold text-gold hover:bg-gold/20 transition-colors">
+          Support
+        </a>
 
-        <!-- Mobile menu anchor hint (simple, no JS needed) -->
         <a href="#mobile-nav"
-           class="lg:hidden rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-200 hover:bg-slate-900 transition-colors"
+           class="lg:hidden rounded-full border border-line px-3 py-2 text-sm text-text0/90 hover:bg-white/5 transition-colors"
            aria-label="Open navigation">
           Menu
         </a>
       </div>
     </div>
 
-    <!-- Mobile Nav (pure HTML) -->
-    <div id="mobile-nav" class="lg:hidden border-t border-slate-800">
-      <div class="mx-auto max-w-6xl px-4 py-3 flex flex-wrap gap-3 text-sm text-slate-300">
-        <a href="#download" class="rounded-md border border-slate-800 px-3 py-1 hover:bg-slate-900 transition-colors">Download</a>
-        <a href="#documentation" class="rounded-md border border-slate-800 px-3 py-1 hover:bg-slate-900 transition-colors">Documentation</a>
-        <a href="#learn" class="rounded-md border border-slate-800 px-3 py-1 hover:bg-slate-900 transition-colors">Learn</a>
-        <a href="#resources" class="rounded-md border border-slate-800 px-3 py-1 hover:bg-slate-900 transition-colors">Resources</a>
-        <a href="#contacts" class="rounded-md border border-slate-800 px-3 py-1 hover:bg-slate-900 transition-colors">Contacts</a>
+    <!-- Mobile nav -->
+    <div id="mobile-nav" class="lg:hidden border-t border-line">
+      <div class="mx-auto max-w-6xl px-4 py-3 flex flex-wrap gap-2 text-sm text-text0/90">
+        <a href="#download" class="rounded-full border border-line px-3 py-1 hover:bg-white/5 transition-colors">Download</a>
+        <a href="#documentation" class="rounded-full border border-line px-3 py-1 hover:bg-white/5 transition-colors">Documentation</a>
+        <a href="#learn" class="rounded-full border border-line px-3 py-1 hover:bg-white/5 transition-colors">Learn</a>
+        <a href="#resources" class="rounded-full border border-line px-3 py-1 hover:bg-white/5 transition-colors">Resources</a>
+        <a href="#contacts" class="rounded-full border border-line px-3 py-1 hover:bg-white/5 transition-colors">Contacts</a>
       </div>
     </div>
   </header>
 
   <main id="top">
     <!-- Hero -->
-    <section class="mx-auto max-w-6xl px-4 py-14">
-      <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
-        <div>
-          <p class="text-sm text-slate-400">Technical product website • Inspired by documentation-first patterns</p>
-          <h1 class="mt-3 text-4xl md:text-5xl font-extrabold tracking-tight">
-            Network visibility starts with clarity.
-          </h1>
-          <p class="mt-4 text-slate-300 leading-relaxed">
-            <span class="font-semibold text-slate-100">W_NETVISUS</span> is a port scanning and network accessibility tool
-            built for professionals who need predictable results and readable output.
-          </p>
+    <section class="hero-bg">
+      <div class="mx-auto max-w-6xl px-4 py-16 lg:py-20">
+        <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">
+              Go deep into your network.
+            </h1>
 
-          <div class="mt-7 flex flex-wrap gap-3">
-            <a href="#download"
-               class="rounded-lg bg-blue-500 px-5 py-3 font-semibold text-white hover:bg-blue-400 active:bg-blue-600 transition-colors">
-              Download stable
-            </a>
-            <a href="#documentation"
-               class="rounded-lg border border-slate-700 px-5 py-3 font-semibold text-slate-200 hover:bg-slate-900 transition-colors">
-              Read documentation
-            </a>
+            <p class="mt-5 text-text1 leading-relaxed max-w-xl">
+              <span class="text-text0 font-semibold">W_NETVISUS</span> is a modern network scanner with a
+              <span class="text-text0 font-semibold">3D-like network map</span> and a <span class="text-text0 font-semibold">visual SONAR</span>.
+              It supports raw packet scanning via a C extension and uses fingerprints for OS/service detection.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href="#download"
+                 class="rounded-full bg-gold px-6 py-3 font-semibold text-bg0 hover:bg-gold2 transition-colors">
+                Download Now
+              </a>
+              <a href="#documentation"
+                 class="rounded-full border border-gold/60 bg-gold/10 px-6 py-3 font-semibold text-gold hover:bg-gold/20 transition-colors">
+                Documentation
+              </a>
+            </div>
+
+            <div class="mt-8 grid gap-3 sm:grid-cols-3">
+              <div class="rounded-2xl border border-line bg-bg1/45 p-4">
+                <div class="text-xs text-text1">Scan engine</div>
+                <div class="mt-1 font-semibold">Raw TCP/UDP</div>
+              </div>
+              <div class="rounded-2xl border border-line bg-bg1/45 p-4">
+                <div class="text-xs text-text1">Visualization</div>
+                <div class="mt-1 font-semibold">SONAR + 3D map</div>
+              </div>
+              <div class="rounded-2xl border border-line bg-bg1/45 p-4">
+                <div class="text-xs text-text1">Interface</div>
+                <div class="mt-1 font-semibold">Modern PyQt5 GUI</div>
+              </div>
+            </div>
           </div>
 
-          <div class="mt-8 grid gap-3 sm:grid-cols-3">
-            <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-              <div class="text-xs text-slate-400">Focus</div>
-              <div class="mt-1 font-semibold">Speed</div>
+          <!-- Right panel -->
+          <div class="rounded-3xl border border-line bg-bg1/50 p-6 shadow-soft">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="text-sm text-text1">What you get</p>
+                <h2 class="mt-1 text-xl font-semibold">Fast scan + clear visuals</h2>
+              </div>
+              <div class="h-10 w-10 rounded-2xl border border-gold/50 bg-gold/10 flex items-center justify-center text-gold font-bold">
+                W
+              </div>
             </div>
-            <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-              <div class="text-xs text-slate-400">Output</div>
-              <div class="mt-1 font-semibold">Readable</div>
-            </div>
-            <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-              <div class="text-xs text-slate-400">Audience</div>
-              <div class="mt-1 font-semibold">Professionals</div>
+
+            <ul class="mt-5 text-sm text-text1 space-y-2">
+              <li>• Raw packet scanning via C-extension (<span class="text-text0">core/raw_scan.c</span>)</li>
+              <li>• OS & service detection using fingerprints in <span class="text-text0">data/</span></li>
+              <li>• Integrated SONAR widget + 3D-like network map</li>
+            </ul>
+
+            <div class="mt-6 rounded-2xl border border-line bg-bg0/50 p-4">
+              <div class="text-xs text-text1">Entry point</div>
+              <div class="mt-1 font-mono text-sm text-text0">python_wrapper/scanner_gui_modern.py</div>
             </div>
           </div>
-        </div>
-
-        <!-- Sample output card -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
-          <div class="flex items-center justify-between">
-            <p class="text-sm text-slate-400">Example output</p>
-            <span class="text-xs text-slate-500">demo</span>
-          </div>
-
-          <pre class="mt-3 overflow-auto rounded-xl border border-slate-800 bg-slate-950 p-4 text-xs text-slate-200">
-Target: 192.168.0.10
-Status: reachable
-
-Open ports:
-  22/tcp   ssh
-  80/tcp   http
-  443/tcp  https
-
-Scan time: 1.2s
-          </pre>
-
-          <p class="mt-4 text-xs text-slate-500">
-            This page is a starter foundation (Practice 7). Real releases/docs will be linked later.
-          </p>
         </div>
       </div>
     </section>
 
     <!-- Download -->
-    <section id="download" class="border-t border-slate-800">
+    <section id="download" class="border-t border-line">
       <div class="mx-auto max-w-6xl px-4 py-14">
         <div class="flex flex-col gap-2">
           <h2 class="text-2xl font-bold">Download</h2>
-          <p class="text-slate-300">Access to the latest stable releases.</p>
+          <p class="text-text1">Access to the latest stable releases.</p>
         </div>
 
         <div class="mt-8 grid gap-4 md:grid-cols-3">
-          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <div class="rounded-3xl border border-line bg-bg1/45 p-6">
             <h3 class="font-semibold">Releases</h3>
-            <p class="mt-2 text-sm text-slate-300">Stable and previous versions.</p>
-            <a href="#" class="mt-4 inline-flex rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-400 transition-colors">
+            <p class="mt-2 text-sm text-text1">Stable and previous versions.</p>
+            <a href="#"
+               class="mt-4 inline-flex rounded-full bg-gold px-4 py-2 text-sm font-semibold text-bg0 hover:bg-gold2 transition-colors">
               Download (placeholder)
             </a>
           </div>
 
-          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <div class="rounded-3xl border border-line bg-bg1/45 p-6">
             <h3 class="font-semibold">License</h3>
-            <p class="mt-2 text-sm text-slate-300">Usage and distribution terms.</p>
-            <a href="#license" class="mt-4 inline-flex rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-900 transition-colors">
+            <p class="mt-2 text-sm text-text1">Usage and distribution terms.</p>
+            <a href="#license"
+               class="mt-4 inline-flex rounded-full border border-gold/60 bg-gold/10 px-4 py-2 text-sm font-semibold text-gold hover:bg-gold/20 transition-colors">
               View
             </a>
           </div>
 
-          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <div class="rounded-3xl border border-line bg-bg1/45 p-6">
             <h3 class="font-semibold">System Requirements</h3>
-            <p class="mt-2 text-sm text-slate-300">Supported OS and environments.</p>
-            <a href="#requirements" class="mt-4 inline-flex rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-900 transition-colors">
+            <p class="mt-2 text-sm text-text1">Python + GUI + optional C compiler.</p>
+            <a href="#requirements"
+               class="mt-4 inline-flex rounded-full border border-gold/60 bg-gold/10 px-4 py-2 text-sm font-semibold text-gold hover:bg-gold/20 transition-colors">
               View
             </a>
           </div>
         </div>
 
-        <div id="license" class="mt-10 rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
-          <h4 class="font-semibold">License (placeholder)</h4>
-          <p class="mt-2 text-sm text-slate-300">
-            Add the final license text/link here (MIT / proprietary / etc.). For Practice 7, a placeholder is acceptable.
+        <div id="license" class="mt-10 rounded-3xl border border-line bg-bg1/45 p-6">
+          <h4 class="font-semibold">License</h4>
+          <p class="mt-2 text-sm text-text1">
+            Add your final license text or link here.
           </p>
         </div>
 
-        <div id="requirements" class="mt-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
-          <h4 class="font-semibold">System Requirements (placeholder)</h4>
-          <ul class="mt-2 text-sm text-slate-300 list-disc pl-5 space-y-1">
-            <li>Windows / Linux / macOS (define later)</li>
-            <li>Network access for scanning</li>
-            <li>Admin privileges may be required for some modes</li>
+        <div id="requirements" class="mt-4 rounded-3xl border border-line bg-bg1/45 p-6">
+          <h4 class="font-semibold">Requirements (from project)</h4>
+          <ul class="mt-2 text-sm text-text1 list-disc pl-5 space-y-1">
+            <li>Python 3.9+ (recommended)</li>
+            <li>PyQt5 (GUI)</li>
+            <li>netifaces (IP interface detection)</li>
+            <li>Optional: C compiler + libpcap to build <span class="text-text0">core/raw_scan.c</span></li>
           </ul>
         </div>
       </div>
     </section>
 
     <!-- Documentation -->
-    <section id="documentation" class="border-t border-slate-800">
+    <section id="documentation" class="border-t border-line">
       <div class="mx-auto max-w-6xl px-4 py-14">
         <h2 class="text-2xl font-bold">Documentation</h2>
-        <p class="mt-2 text-slate-300">Guides and references for effective usage.</p>
+        <p class="mt-2 text-text1">Guides and references for effective usage.</p>
 
-        <div class="mt-8 grid gap-4 md:grid-cols-3">
-          <article class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <div class="mt-8 grid gap-4 lg:grid-cols-3">
+          <!-- Quick Start (REAL from README + setup.py) -->
+          <article class="rounded-3xl border border-line bg-bg1/45 p-6 lg:col-span-2">
             <h3 class="font-semibold">Quick Start</h3>
-            <p class="mt-2 text-sm text-slate-300">Getting started in minutes.</p>
-            <pre class="mt-4 overflow-auto rounded-xl border border-slate-800 bg-slate-950 p-4 text-xs text-slate-200">
-w_netvisus scan 192.168.0.10
-w_netvisus scan 192.168.0.0/24
-            </pre>
+            <p class="mt-2 text-sm text-text1">Run the modern GUI with integrated SONAR.</p>
+
+            <div class="mt-4 rounded-2xl border border-line bg-bg0/55 p-4">
+              <div class="text-xs text-text1">Install dependencies</div>
+              <pre class="mt-2 overflow-auto text-xs text-text0 font-mono">pip install PyQt5 netifaces</pre>
+            </div>
+
+            <div class="mt-3 rounded-2xl border border-line bg-bg0/55 p-4">
+              <div class="text-xs text-text1">Run from project root</div>
+              <pre class="mt-2 overflow-auto text-xs text-text0 font-mono">. venv/bin/activate
+sudo PYTHONPATH=. python3 python_wrapper/scanner_gui_modern.py</pre>
+            </div>
+
+            <p class="mt-4 text-xs text-text1">
+              Note: <span class="text-text0 font-semibold">sudo</span> is used because raw packet scanning may require elevated privileges.
+            </p>
           </article>
 
-          <article class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <!-- Usage Guide -->
+          <article class="rounded-3xl border border-line bg-bg1/45 p-6">
             <h3 class="font-semibold">Usage Guide</h3>
-            <p class="mt-2 text-sm text-slate-300">Detailed scanning examples.</p>
-            <ul class="mt-4 text-sm text-slate-300 list-disc pl-5 space-y-1">
-              <li>Target selection</li>
-              <li>Port range presets</li>
-              <li>Exporting results</li>
+            <p class="mt-2 text-sm text-text1">What the application does.</p>
+            <ul class="mt-4 text-sm text-text1 list-disc pl-5 space-y-1">
+              <li>Chooses network interface (netifaces)</li>
+              <li>Scans targets/ports (TCP SYN / UDP)</li>
+              <li>Detects OS/service using fingerprints in <span class="text-text0">data/</span></li>
+              <li>Shows SONAR + network map visualization</li>
             </ul>
           </article>
 
-          <article class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
-            <h3 class="font-semibold">FAQ</h3>
-            <p class="mt-2 text-sm text-slate-300">Common questions and solutions.</p>
-            <div class="mt-4 space-y-3 text-sm">
-              <div>
-                <div class="font-semibold text-slate-200">Why is a port shown as filtered?</div>
-                <div class="text-slate-300">Firewall or network policy may block probes.</div>
-              </div>
-              <div>
-                <div class="font-semibold text-slate-200">How to improve accuracy?</div>
-                <div class="text-slate-300">Use multiple retries and validate host reachability.</div>
-              </div>
+          <!-- Build extension (setup.py) -->
+          <article class="rounded-3xl border border-line bg-bg1/45 p-6 lg:col-span-3">
+            <h3 class="font-semibold">Building the raw scanner module (optional)</h3>
+            <p class="mt-2 text-sm text-text1">
+              The project contains a C-extension (<span class="text-text0">core/raw_scan.c</span>) linked with <span class="text-text0">pcap</span>.
+              You may need a C compiler + libpcap installed on your system.
+            </p>
+            <div class="mt-4 rounded-2xl border border-line bg-bg0/55 p-4">
+              <div class="text-xs text-text1">Build example (one of the typical approaches)</div>
+              <pre class="mt-2 overflow-auto text-xs text-text0 font-mono">python3 setup.py build_ext --inplace</pre>
             </div>
+            <p class="mt-3 text-xs text-text1">
+              macOS note: setup.py includes Homebrew include/lib hints (<span class="text-text0">/opt/homebrew</span>) for libpcap.
+            </p>
           </article>
         </div>
       </div>
     </section>
 
     <!-- Learn -->
-    <section id="learn" class="border-t border-slate-800">
+    <section id="learn" class="border-t border-line">
       <div class="mx-auto max-w-6xl px-4 py-14">
         <h2 class="text-2xl font-bold">Learn</h2>
-        <p class="mt-2 text-slate-300">What W_NETVISUS is and what problems it solves.</p>
+        <p class="mt-2 text-text1">What W_NETVISUS is and what problems it solves.</p>
 
         <div class="mt-8 grid gap-4 lg:grid-cols-3">
-          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6 lg:col-span-2">
-            <h3 class="font-semibold">What is W_NETVISUS?</h3>
-            <p class="mt-2 text-sm text-slate-300 leading-relaxed">
-              A technical tool focused on network visibility: scanning open ports, checking host accessibility,
-              and presenting results clearly for decision-making.
-            </p>
+          <div class="rounded-3xl border border-line bg-bg1/45 p-6 lg:col-span-2">
+            <h3 class="font-semibold">Key features</h3>
+            <ul class="mt-3 text-sm text-text1 list-disc pl-5 space-y-1">
+              <li>Raw packet scanning (TCP SYN / UDP) via C-extension</li>
+              <li>OS and service detection using stored fingerprints</li>
+              <li>Modern PyQt5 GUI with acrylic/dark style</li>
+              <li>3D-like network map</li>
+              <li>Visual SONAR (waves + glowing host dots)</li>
+            </ul>
 
-            <div class="mt-5 grid gap-4 sm:grid-cols-2">
-              <div class="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-                <div class="font-semibold">Features</div>
-                <p class="mt-1 text-sm text-slate-300">Key capabilities of the scanner.</p>
-                <ul class="mt-3 text-sm text-slate-300 list-disc pl-5 space-y-1">
-                  <li>Fast scanning workflow</li>
-                  <li>Readable results</li>
-                  <li>Export-ready output (later)</li>
-                </ul>
-              </div>
-              <div class="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-                <div class="font-semibold">Use Cases</div>
-                <p class="mt-1 text-sm text-slate-300">Typical network analysis scenarios.</p>
-                <ul class="mt-3 text-sm text-slate-300 list-disc pl-5 space-y-1">
-                  <li>Inventory exposed services</li>
-                  <li>Validate firewall rules</li>
-                  <li>Quick troubleshooting</li>
-                </ul>
-              </div>
-            </div>
+            <h4 class="mt-6 font-semibold">Use cases</h4>
+            <ul class="mt-3 text-sm text-text1 list-disc pl-5 space-y-1">
+              <li>Quickly find open ports and exposed services</li>
+              <li>Validate network accessibility and perimeter rules</li>
+              <li>Visualize nearby hosts/activity using SONAR</li>
+            </ul>
           </div>
 
-          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
-            <h3 class="font-semibold">Design note</h3>
-            <p class="mt-2 text-sm text-slate-300">
-              Calm, technical UI (Wireshark-like) + clean spacing and hierarchy (PortSwigger-like).
-              Motion is subtle: hover and transitions only.
-            </p>
-            <div class="mt-4 rounded-xl border border-slate-800 bg-slate-950/40 p-4 text-xs text-slate-300">
-              Tip: keep content readable and navigation obvious.
-            </div>
+          <div class="rounded-3xl border border-line bg-bg1/45 p-6">
+            <h3 class="font-semibold">Entry points</h3>
+            <p class="mt-2 text-sm text-text1">From the project sources:</p>
+            <ul class="mt-4 text-sm text-text1 space-y-2">
+              <li><span class="text-text0 font-mono">scanner_gui_modern.py</span> — main GUI</li>
+              <li><span class="text-text0 font-mono">network_map_3d.py</span> — map</li>
+              <li><span class="text-text0 font-mono">sonar_widget.py</span> — sonar</li>
+            </ul>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Resources -->
-    <section id="resources" class="border-t border-slate-800">
+    <section id="resources" class="border-t border-line">
       <div class="mx-auto max-w-6xl px-4 py-14">
         <h2 class="text-2xl font-bold">Resources</h2>
-        <p class="mt-2 text-slate-300">Project-related links and community.</p>
+        <p class="mt-2 text-text1">Project-related links and community.</p>
 
         <div class="mt-8 grid gap-4 md:grid-cols-2">
-          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <div class="rounded-3xl border border-line bg-bg1/45 p-6">
             <h3 class="font-semibold">GitHub</h3>
-            <p class="mt-2 text-sm text-slate-300">Source code and issues.</p>
-            <a href="#" class="mt-4 inline-flex rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-900 transition-colors">
-              Open repository (placeholder)
+            <p class="mt-2 text-sm text-text1">Source code and issues.</p>
+            <a href="#"
+               class="mt-4 inline-flex rounded-full border border-gold/60 bg-gold/10 px-4 py-2 text-sm font-semibold text-gold hover:bg-gold/20 transition-colors">
+              Open repository (set link)
             </a>
           </div>
 
-          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <div class="rounded-3xl border border-line bg-bg1/45 p-6">
             <h3 class="font-semibold">Changelog</h3>
-            <p class="mt-2 text-sm text-slate-300">Release history and updates.</p>
-            <ul class="mt-4 text-sm text-slate-300 list-disc pl-5 space-y-1">
-              <li>v0.1 — initial website foundation</li>
-              <li>v0.2 — docs expansion (planned)</li>
+            <p class="mt-2 text-sm text-text1">Release history and updates.</p>
+            <ul class="mt-4 text-sm text-text1 list-disc pl-5 space-y-1">
+              <li>v0.1 — website foundation (Practice 7)</li>
+              <li>v0.2 — docs & download wiring (planned)</li>
               <li>v1.0 — public release (planned)</li>
             </ul>
           </div>
+        </div>
+
+        <div id="support" class="mt-10 rounded-3xl border border-line bg-bg1/45 p-6">
+          <h3 class="font-semibold">Support</h3>
+          <p class="mt-2 text-sm text-text1">
+            Add your preferred support model here (donations, sponsorship, commercial license, etc.).
+          </p>
         </div>
       </div>
     </section>
 
     <!-- Contacts -->
-    <section id="contacts" class="border-t border-slate-800">
+    <section id="contacts" class="border-t border-line">
       <div class="mx-auto max-w-6xl px-4 py-14">
         <h2 class="text-2xl font-bold">Contacts</h2>
-        <p class="mt-2 text-slate-300">Ways to reach the project maintainers.</p>
+        <p class="mt-2 text-text1">Ways to reach the project maintainers.</p>
 
         <div class="mt-8 grid gap-4 md:grid-cols-2">
-          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <div class="rounded-3xl border border-line bg-bg1/45 p-6">
             <h3 class="font-semibold">Email</h3>
-            <p class="mt-2 text-sm text-slate-300">Direct communication.</p>
-            <p class="mt-4 text-sm text-slate-200">
-              <span class="text-slate-400">Contact:</span> your-email@example.com
+            <p class="mt-2 text-sm text-text1">Direct communication.</p>
+            <p class="mt-4 text-sm text-text0">
+              <span class="text-text1">Contact:</span> your-email@example.com
             </p>
           </div>
 
-          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <div class="rounded-3xl border border-line bg-bg1/45 p-6">
             <h3 class="font-semibold">Links</h3>
-            <p class="mt-2 text-sm text-slate-300">External profiles and resources.</p>
-            <ul class="mt-4 text-sm text-slate-200 space-y-2">
-              <li><span class="text-slate-400">GitHub:</span> https://github.com/your-username</li>
-              <li><span class="text-slate-400">Telegram:</span> https://t.me/your-handle</li>
+            <p class="mt-2 text-sm text-text1">External profiles and resources.</p>
+            <ul class="mt-4 text-sm text-text0 space-y-2">
+              <li><span class="text-text1">GitHub:</span> https://github.com/your-username</li>
+              <li><span class="text-text1">Telegram:</span> https://t.me/your-handle</li>
             </ul>
           </div>
         </div>
 
-        <!-- back to top -->
         <div class="mt-10">
-          <a href="#top" class="inline-flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors">
-            <span class="rounded-md border border-slate-800 px-3 py-2 hover:bg-slate-900 transition-colors">Back to top</span>
+          <a href="#top"
+             class="inline-flex rounded-full border border-line px-4 py-2 text-sm text-text0/90 hover:bg-white/5 transition-colors">
+            Back to top
           </a>
         </div>
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 bg-slate-950">
-      <div class="mx-auto max-w-6xl px-4 py-8 text-xs text-slate-500 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <span>© W_NETVISUS — Technical website foundation (Practice 7)</span>
-        <span>Built with Tailwind CDN • No build step</span>
+    <footer class="border-t border-line bg-bg0">
+      <div class="mx-auto max-w-6xl px-4 py-8 text-xs text-text1 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <span>© W_NETVISUS — Website foundation</span>
+        <span>Tailwind CDN · No build step</span>
       </div>
     </footer>
   </main>
