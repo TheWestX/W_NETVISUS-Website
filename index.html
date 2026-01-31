@@ -3,268 +3,563 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>W_NETVISUS · Go Deep</title>
+  <title>W_NETVISUS • Go Deep into your network visibility</title>
 
-  <!-- Tailwind config BEFORE CDN -->
-  <script>
-    tailwind = {
-      config: {
-        theme: {
-          extend: {
-            colors: {
-              ink: "#070B12",
-              navy: "#0B1220",
-              line: "#1E293B",
-              text: "#E6EDF7",
-              muted: "#B8C4D6",
-              gold: "#C7A17A",
-              gold2: "#E6C9A8",
-              paper: "#F6F7FB"
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="description" content="W_NETVISUS is a modern network scanner with a 3D-like network map and visual SONAR. Raw TCP/UDP scanning, OS/service detection, modern PyQt GUI." />
+  <meta name="theme-color" content="#0b0f16" />
 
-  <meta name="description" content="W_NETVISUS — network visibility scanner with modern GUI, SONAR visualization, and raw scanning engine." />
-  <meta name="theme-color" content="#070B12" />
-
-  <!-- ✅ Proper favicon set (put these files into /assets as described) -->
-  <link rel="icon" href="./assets/favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
-  <link rel="manifest" href="./assets/site.webmanifest">
+  <!-- Favicons (use real small files, not the big logo.png) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png" />
+  <!-- Optional (nice to have) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
 
   <style>
-    html { scroll-behavior: smooth; }
-
-    /* Hero background like Wireshark: dark + subtle network lines */
-    .hero-bg{
-      background:
-        radial-gradient(900px 520px at 20% 10%, rgba(199,161,122,.18), transparent 60%),
-        radial-gradient(900px 520px at 85% 20%, rgba(199,161,122,.10), transparent 62%),
-        linear-gradient(to bottom, #070B12, #070B12);
-      position: relative;
-      overflow: hidden;
-    }
-    .hero-bg:before{
-      content:"";
-      position:absolute;
-      inset:-120px -120px -120px -120px;
-      background-image:
-        linear-gradient(rgba(230,237,247,.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(230,237,247,.07) 1px, transparent 1px);
-      background-size: 180px 180px;
-      transform: rotate(-8deg);
-      opacity: .25;
-      pointer-events:none;
-      mask-image: radial-gradient(closest-side, rgba(0,0,0,.9), transparent 70%);
+    :root{
+      --bg0:#070a10;
+      --bg1:#0b1020;
+      --panel: rgba(10, 14, 22, .55);
+      --panel2: rgba(10, 14, 22, .35);
+      --line: rgba(255,255,255,.10);
+      --line2: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --muted2: rgba(255,255,255,.55);
+      --gold: #c7a17a;
+      --gold2:#e1c39a;
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --radius: 999px;
+      --radius2: 20px;
+      --max: 1180px;
     }
 
-    /* “Shark fin” style shape but unique to your brand (gold) */
-    .fin{
-      width: min(520px, 72vw);
-      height: min(520px, 72vw);
-      background:
-        radial-gradient(closest-side at 35% 35%, rgba(230,201,168,.70), rgba(199,161,122,.25) 55%, rgba(7,11,18,0) 72%),
-        linear-gradient(135deg, rgba(199,161,122,.65), rgba(199,161,122,.08));
-      clip-path: polygon(56% 7%, 78% 18%, 88% 33%, 93% 55%, 83% 76%, 63% 92%, 45% 95%, 56% 7%);
-      filter: drop-shadow(0 25px 60px rgba(0,0,0,.55));
-      position: relative;
-    }
-    .fin:after{
-      content:"";
-      position:absolute;
-      inset: 10%;
-      border: 1px solid rgba(230,201,168,.35);
-      border-radius: 18px;
-      opacity: .5;
-      transform: rotate(4deg);
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 700px at 20% 10%, rgba(199,161,122,.12), transparent 60%),
+                  radial-gradient(1000px 700px at 80% 20%, rgba(199,161,122,.08), transparent 60%),
+                  linear-gradient(180deg, var(--bg1), var(--bg0));
+      overflow-x:hidden;
     }
 
-    /* Header style closer to Wireshark (solid, not glass) */
+    a{color:inherit; text-decoration:none}
+    .container{max-width:var(--max); margin:0 auto; padding:0 20px}
+
+    /* Top announcement bar (Wireshark-like) */
     .topbar{
-      background: #0B1220;
-      border-bottom: 1px solid rgba(148,163,184,.25);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      font-size: 12px;
+      color: var(--muted);
     }
-    .header{
-      background: rgba(7,11,18,.92);
-      border-bottom: 1px solid rgba(148,163,184,.25);
+    .topbar .row{
+      display:flex; align-items:center; justify-content:center;
+      padding:10px 0;
+      gap:8px;
+      text-align:center;
     }
+    .topbar .row a{
+      color: var(--gold2);
+      border-bottom:1px dotted rgba(225,195,154,.6);
+    }
+    .topbar .right{
+      position:absolute; right:18px; top:8px;
+      display:flex; align-items:center; gap:12px;
+      color: var(--muted2);
+    }
+    .topbar .sun{
+      width:18px; height:18px; border:1px solid rgba(255,255,255,.18);
+      border-radius:999px; display:grid; place-items:center;
+      opacity:.85;
+    }
+
+    /* Header/nav (Wireshark-like) */
+    header{
+      position: sticky; top:0; z-index:50;
+      backdrop-filter: blur(14px);
+      background: rgba(7,10,16,.55);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:18px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 220px;
+    }
+    .brand img{
+      width:44px; height:44px;
+      object-fit:contain;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,.55));
+    }
+    .brand .name{
+      display:flex; flex-direction:column; line-height:1.1;
+    }
+    .brand .name b{letter-spacing:.6px}
+    .brand .name small{color:var(--muted2); font-size:12px; margin-top:2px}
+
+    .menu{
+      display:flex; align-items:center; gap:18px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 14px;
+      white-space:nowrap;
+      overflow:auto;
+      scrollbar-width:none;
+    }
+    .menu::-webkit-scrollbar{display:none}
+    .menu a{
+      padding:10px 8px;
+      border-radius: 10px;
+      transition: .18s ease;
+    }
+    .menu a:hover{
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+    }
+
+    .nav-right{
+      display:flex; align-items:center; gap:10px;
+      min-width: 220px;
+      justify-content:flex-end;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 16px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-weight:700;
+      transition:.18s ease;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
+    .btn.primary{
+      border-color: rgba(199,161,122,.55);
+      background: linear-gradient(180deg, rgba(199,161,122,.22), rgba(199,161,122,.10));
+    }
+    .btn.primary:hover{
+      background: linear-gradient(180deg, rgba(199,161,122,.28), rgba(199,161,122,.12));
+    }
+
+    /* Hero (Wireshark-like composition) */
+    .hero{
+      position:relative;
+      min-height: 640px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(800px 520px at 25% 25%, rgba(199,161,122,.10), transparent 60%),
+        radial-gradient(900px 600px at 75% 35%, rgba(199,161,122,.08), transparent 62%),
+        linear-gradient(180deg, rgba(9,12,18,.80), rgba(7,10,16,.95));
+      z-index:-2;
+    }
+    .hero::after{
+      /* subtle network lines overlay */
+      content:"";
+      position:absolute; inset:0;
+      opacity:.20;
+      background-image:
+        radial-gradient(circle at 10px 10px, rgba(255,255,255,.20) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.10) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 42px 42px, 210px 210px, 210px 210px;
+      mask-image: radial-gradient(700px 400px at 30% 35%, black, transparent 75%);
+      z-index:-1;
+      pointer-events:none;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      align-items:center;
+      gap:40px;
+      padding: 56px 0 70px;
+    }
+    @media (max-width: 980px){
+      .hero-grid{grid-template-columns:1fr; padding: 42px 0 52px}
+    }
+
+    .kicker{
+      color: var(--muted2);
+      font-weight:700;
+      font-size: 13px;
+      letter-spacing:.4px;
+    }
+    h1{
+      margin:14px 0 0;
+      font-size: clamp(40px, 4.8vw, 76px);
+      line-height: .98;
+      letter-spacing: -1px;
+    }
+    h1 .accent{color: rgba(199,161,122,.95)}
+    .lead{
+      margin-top: 18px;
+      max-width: 640px;
+      font-size: 16.5px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+    .hero-cta{
+      margin-top: 26px;
+      display:flex; gap:14px; flex-wrap:wrap;
+    }
+    .hero-note{
+      margin-top: 14px;
+      color: var(--muted2);
+      font-size: 12.5px;
+    }
+
+    .hero-art{
+      position:relative;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height: 360px;
+    }
+    .hero-art .glow{
+      position:absolute;
+      width: 520px; height: 520px;
+      background: radial-gradient(circle at 50% 50%, rgba(199,161,122,.20), transparent 62%);
+      filter: blur(6px);
+      opacity:.9;
+    }
+    .hero-art img{
+      width:min(460px, 92%);
+      height:auto;
+      object-fit:contain;
+      filter: drop-shadow(0 28px 60px rgba(0,0,0,.55));
+      transform: rotate(-6deg);
+      opacity:.95;
+    }
+
+    /* Sections (white area like Wireshark below fold) */
+    .below{
+      background: #f7f7f8;
+      color: #111;
+      padding: 54px 0 80px;
+    }
+    .section-title{
+      font-size: 34px;
+      letter-spacing:-.5px;
+      margin:0;
+    }
+    .section-sub{
+      margin-top:10px;
+      color:#4a4f57;
+      max-width: 720px;
+      line-height:1.6;
+    }
+
+    .cards{
+      margin-top: 26px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:18px;
+    }
+    @media (max-width: 980px){ .cards{grid-template-columns:1fr} }
+
+    .card{
+      background:#fff;
+      border:1px solid rgba(16,24,40,.10);
+      border-radius: 18px;
+      padding:18px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.05);
+    }
+    .card h3{margin:0; font-size: 16px}
+    .card p{margin:8px 0 0; color:#525a66; line-height:1.55}
+    .card .card-btn{
+      margin-top: 12px;
+      display:inline-flex;
+      padding:10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(199,161,122,.55);
+      color:#2b2f36;
+      font-weight:800;
+      background: linear-gradient(180deg, rgba(199,161,122,.22), rgba(199,161,122,.10));
+    }
+
+    /* Documentation blocks */
+    .docs-grid{
+      margin-top: 22px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+      align-items:start;
+    }
+    @media (max-width: 980px){ .docs-grid{grid-template-columns:1fr} }
+
+    pre{
+      margin:0;
+      background:#0b0f16;
+      color: rgba(255,255,255,.92);
+      border-radius: 14px;
+      padding: 14px;
+      overflow:auto;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 18px 40px rgba(0,0,0,.20);
+      font-size: 12.5px;
+      line-height:1.55;
+    }
+
+    /* Footer */
+    footer{
+      background:#f7f7f8;
+      color:#6a717d;
+      border-top: 1px solid rgba(16,24,40,.10);
+      padding: 26px 0;
+      font-size: 12px;
+    }
+
+    /* Small helper anchor offset (sticky header) */
+    .anchor{scroll-margin-top: 90px}
   </style>
 </head>
 
-<body class="bg-paper text-slate-900 antialiased">
-  <!-- Top announcement bar (Wireshark-like) -->
+<body>
+  <!-- Topbar -->
   <div class="topbar">
-    <div class="mx-auto max-w-6xl px-4 py-2 text-xs text-muted flex items-center justify-between gap-3">
-      <div class="truncate text-slate-200">
-        Official website of <span class="text-white font-semibold">W_NETVISUS</span>. Documentation-first, download-first.
+    <div class="container" style="position:relative">
+      <div class="row">
+        <span><b>W_NETVISUS</b> is in active development.</span>
+        <span>Read the</span>
+        <a href="#documentation">Quick Start</a>
+        <span>or grab a</span>
+        <a href="#download">release</a>
+        <span>when available.</span>
       </div>
-      <a href="#documentation" class="hidden sm:inline text-gold hover:text-gold2 transition-colors">
-        Learn about the docs →
-      </a>
+      <div class="right" aria-hidden="true">
+        <span class="sun">☼</span>
+      </div>
     </div>
   </div>
 
-  <!-- Header (Wireshark-ish: logo left, nav center, donate-like button right) -->
-  <header class="header sticky top-0 z-50">
-    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-4">
-      <a href="#top" class="flex items-center gap-3">
-        <!-- IMPORTANT: keep logo clean (no circle, no bg) -->
-        <img src="./assets/logo.png" alt="W_NETVISUS logo" class="h-8 w-auto object-contain" />
-      </a>
-
-      <nav class="hidden lg:flex items-center gap-6 text-sm text-slate-200">
-        <a href="#download" class="hover:text-white transition-colors">Download</a>
-        <a href="#learn" class="hover:text-white transition-colors">Learn</a>
-        <a href="#resources" class="hover:text-white transition-colors">Resources</a>
-        <a href="#tools" class="hover:text-white transition-colors">Tools</a>
-        <a href="#community" class="hover:text-white transition-colors">Community</a>
-        <a href="#develop" class="hover:text-white transition-colors">Develop</a>
-      </nav>
-
-      <div class="flex items-center gap-3">
-        <a href="#download"
-           class="rounded-full border border-gold/60 bg-gold/10 px-4 py-2 text-sm font-semibold text-gold hover:bg-gold/20 transition-colors">
-          Download
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="#top">
+          <img src="./assets/logo.png" alt="W_NETVISUS logo" />
+          <div class="name">
+            <b>W_NETVISUS</b>
+            <small>Network scanner • 3D map • Visual SONAR</small>
+          </div>
         </a>
-        <a href="#support"
-           class="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-ink hover:bg-gold2 transition-colors">
-          Support
-        </a>
+
+        <nav class="menu" aria-label="Primary navigation">
+          <a href="#download">Download</a>
+          <a href="#learn">Learn</a>
+          <a href="#resources">Resources</a>
+          <a href="#tools">Tools</a>
+          <a href="#community">Community</a>
+          <a href="#develop">Develop</a>
+        </nav>
+
+        <div class="nav-right">
+          <a class="btn primary" href="#download">Download</a>
+          <a class="btn" href="#support">Support</a>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- HERO (Dark section like Wireshark) -->
-  <section id="top" class="hero-bg text-text">
-    <div class="mx-auto max-w-6xl px-4 py-16 lg:py-20">
-      <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
-        <!-- Left text -->
-        <div>
-          <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight leading-[0.95]">
-            Go deep<br/>into your<br/>network visibility
+  <!-- Hero -->
+  <main id="top" class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <section>
+          <div class="kicker">W_NETVISUS • Network Visibility & Port Scanning</div>
+          <h1>
+            Go deep into your<br/>
+            <span class="accent">network visibility</span>.
           </h1>
-
-          <p class="mt-6 text-muted max-w-xl leading-relaxed">
-            W_NETVISUS helps you discover exposed services, visualize host activity with SONAR,
-            and explore your network using a modern GUI. Built for clarity and repeatable results.
+          <p class="lead">
+            W_NETVISUS is a modern network scanner with a <b>3D-like network map</b> and a <b>visual SONAR</b>.
+            It supports raw TCP/UDP scanning via a C-extension and uses fingerprints for OS/service detection.
           </p>
 
-          <a href="#download"
-             class="mt-8 inline-flex rounded-full bg-gold px-6 py-3 font-semibold text-ink hover:bg-gold2 transition-colors">
-            Download Now
-          </a>
+          <div class="hero-cta">
+            <!-- TODO: put real release link later -->
+            <a class="btn primary" href="#download">Download Now</a>
+            <a class="btn" href="#documentation">Documentation</a>
+          </div>
 
-          <!-- Like Wireshark: short supporting line under CTA -->
-          <p class="mt-4 text-sm text-muted">
-            Free for educational use • Documentation-first workflow
+          <div class="hero-note">
+            Free for educational use • Documentation-first workflow • Designed in gold tones (VISUS = “eye”)
+          </div>
+        </section>
+
+        <aside class="hero-art" aria-label="Product visual">
+          <div class="glow" aria-hidden="true"></div>
+          <img src="./assets/logo.png" alt="W_NETVISUS visual mark" />
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Below fold -->
+  <section class="below">
+    <div class="container">
+
+      <!-- Download -->
+      <div id="download" class="anchor"></div>
+      <h2 class="section-title">Download</h2>
+      <p class="section-sub">Access to the latest stable releases (placeholder for Practice 7, real files later).</p>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Releases</h3>
+          <p>Stable and previous versions.</p>
+          <!-- TODO: replace with GitHub Releases link -->
+          <a class="card-btn" href="#" aria-label="Download release (placeholder)">Download (placeholder)</a>
+        </div>
+        <div class="card">
+          <h3>License</h3>
+          <p>Usage and distribution terms.</p>
+          <a class="card-btn" href="#license">View</a>
+        </div>
+        <div class="card">
+          <h3>System Requirements</h3>
+          <p>Python + GUI + optional C compiler for raw scanning.</p>
+          <a class="card-btn" href="#requirements">View</a>
+        </div>
+      </div>
+
+      <div id="license" class="anchor" style="margin-top:18px"></div>
+      <div class="card">
+        <h3>License (placeholder)</h3>
+        <p>
+          Add final license text/link here later (MIT / proprietary / etc.).
+          For Practice 7 a placeholder is acceptable.
+        </p>
+      </div>
+
+      <div id="requirements" class="anchor" style="margin-top:18px"></div>
+      <div class="card">
+        <h3>System Requirements</h3>
+        <p>
+          Python 3.9+ recommended. PyQt5 GUI. Raw scanning may need elevated permissions.
+          Optional: C compiler if you rebuild the extension.
+        </p>
+      </div>
+
+      <!-- Documentation -->
+      <div id="documentation" class="anchor" style="margin-top:46px"></div>
+      <h2 class="section-title">Documentation</h2>
+      <p class="section-sub">Quick Start + usage guidance (real commands from your repository).</p>
+
+      <div class="docs-grid">
+        <div class="card">
+          <h3>Quick Start</h3>
+          <p style="margin-top:8px">
+            Install dependencies:
+          </p>
+          <pre>pip install PyQt5 netifaces</pre>
+
+          <p style="margin-top:12px">
+            Run from project root:
+          </p>
+          <pre>. venv/bin/activate
+sudo PYTHONPATH=. python3 python_wrapper/scanner_gui_modern.py</pre>
+
+          <p style="margin-top:10px;color:#525a66">
+            Note: <b>sudo</b> may be required for raw packet scanning (depending on OS and mode).
           </p>
         </div>
 
-        <!-- Right visual -->
-        <div class="flex justify-center lg:justify-end">
-          <div class="fin" aria-hidden="true"></div>
+        <div class="card">
+          <h3>What you get</h3>
+          <p>Fast scan + clear visuals.</p>
+          <ul style="margin:12px 0 0; padding-left:18px; color:#525a66; line-height:1.6">
+            <li>Raw TCP SYN / UDP scanning via C-extension (<code>core/raw_scan.c</code>)</li>
+            <li>OS & service detection using fingerprints in <code>data/</code></li>
+            <li>Modern PyQt5 GUI: <code>python_wrapper/scanner_gui_modern.py</code></li>
+            <li>3D-like network map (<code>network_map_3d.py</code>) + SONAR widget</li>
+          </ul>
         </div>
       </div>
+
+      <!-- Learn -->
+      <div id="learn" class="anchor" style="margin-top:46px"></div>
+      <h2 class="section-title">Learn</h2>
+      <p class="section-sub">What W_NETVISUS is and which tasks it solves in real networks.</p>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Use Cases</h3>
+          <p>Inventory exposed services, validate firewall rules, troubleshoot connectivity.</p>
+        </div>
+        <div class="card">
+          <h3>Features</h3>
+          <p>Raw scanning, fingerprints, 3D network map, SONAR visualization, modern GUI.</p>
+        </div>
+        <div class="card">
+          <h3>FAQ</h3>
+          <p>Why ports show as filtered, permissions, accuracy, OS detection limitations.</p>
+        </div>
+      </div>
+
+      <!-- Resources -->
+      <div id="resources" class="anchor" style="margin-top:46px"></div>
+      <h2 class="section-title">Resources</h2>
+      <p class="section-sub">Project links: repository, changelog, releases.</p>
+
+      <div class="cards">
+        <div class="card">
+          <h3>GitHub</h3>
+          <p>Source code and issues.</p>
+          <!-- TODO: put your real repo -->
+          <a class="card-btn" href="#">Open repository (placeholder)</a>
+        </div>
+        <div class="card">
+          <h3>Changelog</h3>
+          <p>Release history and updates (add later).</p>
+        </div>
+        <div class="card">
+          <h3>Contacts</h3>
+          <p>Support email, links, community channels.</p>
+        </div>
+      </div>
+
+      <!-- Extra anchors for menu similarity -->
+      <div id="tools" class="anchor" style="margin-top:46px"></div>
+      <h2 class="section-title">Tools</h2>
+      <p class="section-sub">Planned utilities: export formats, presets, reporting (placeholder).</p>
+
+      <div id="community" class="anchor" style="margin-top:46px"></div>
+      <h2 class="section-title">Community</h2>
+      <p class="section-sub">User feedback and future public documentation (placeholder).</p>
+
+      <div id="develop" class="anchor" style="margin-top:46px"></div>
+      <h2 class="section-title">Develop</h2>
+      <p class="section-sub">Build notes, contributing, packaging (placeholder).</p>
+
+      <div id="support" class="anchor" style="margin-top:46px"></div>
+      <h2 class="section-title">Support</h2>
+      <p class="section-sub">
+        <!-- TODO: replace email -->
+        Email: <b>your-email@example.com</b>
+      </p>
+
+      <div style="margin-top:26px">
+        <a class="btn" href="#top">Back to top</a>
+      </div>
+
     </div>
   </section>
 
-  <!-- After hero: LIGHT sections like Wireshark -->
-  <section id="download" class="border-t border-slate-200 bg-paper">
-    <div class="mx-auto max-w-6xl px-4 py-14">
-      <h2 class="text-3xl font-bold">Download</h2>
-      <p class="mt-2 text-slate-600">Access to the latest stable releases.</p>
-
-      <div class="mt-8 grid gap-4 md:grid-cols-3">
-        <div class="rounded-2xl border border-slate-200 bg-white p-6">
-          <h3 class="font-semibold">Releases</h3>
-          <p class="mt-2 text-sm text-slate-600">Stable and previous versions.</p>
-          <a href="#" class="mt-4 inline-flex rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition-colors">
-            Download (placeholder)
-          </a>
-        </div>
-
-        <div class="rounded-2xl border border-slate-200 bg-white p-6">
-          <h3 class="font-semibold">License</h3>
-          <p class="mt-2 text-sm text-slate-600">Usage and distribution terms.</p>
-          <a href="#license" class="mt-4 inline-flex rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50 transition-colors">
-            View
-          </a>
-        </div>
-
-        <div class="rounded-2xl border border-slate-200 bg-white p-6">
-          <h3 class="font-semibold">System Requirements</h3>
-          <p class="mt-2 text-sm text-slate-600">Python + GUI + optional C compiler.</p>
-          <a href="#requirements" class="mt-4 inline-flex rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50 transition-colors">
-            View
-          </a>
-        </div>
-      </div>
-
-      <div id="license" class="mt-10 rounded-2xl border border-slate-200 bg-white p-6">
-        <h4 class="font-semibold">License</h4>
-        <p class="mt-2 text-sm text-slate-600">Add your final license text or link here.</p>
-      </div>
-
-      <div id="requirements" class="mt-4 rounded-2xl border border-slate-200 bg-white p-6">
-        <h4 class="font-semibold">Requirements</h4>
-        <ul class="mt-2 text-sm text-slate-600 list-disc pl-5 space-y-1">
-          <li>Python 3.9+</li>
-          <li>PyQt5 (GUI)</li>
-          <li>netifaces (interface detection)</li>
-          <li>Optional: C compiler + libpcap for raw scanner module</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section id="documentation" class="border-t border-slate-200 bg-paper">
-    <div class="mx-auto max-w-6xl px-4 py-14">
-      <h2 class="text-3xl font-bold">Documentation</h2>
-      <p class="mt-2 text-slate-600">Quick start and usage guide.</p>
-
-      <div class="mt-8 grid gap-4 lg:grid-cols-3">
-        <div class="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6">
-          <h3 class="font-semibold">Quick Start</h3>
-          <p class="mt-2 text-sm text-slate-600">Replace these commands with the exact steps from your README.</p>
-
-          <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <div class="text-xs text-slate-500">Install dependencies</div>
-            <pre class="mt-2 overflow-auto text-xs font-mono text-slate-800">pip install -r requirements.txt</pre>
-          </div>
-
-          <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <div class="text-xs text-slate-500">Run GUI</div>
-            <pre class="mt-2 overflow-auto text-xs font-mono text-slate-800">python python_wrapper/scanner_gui_modern.py</pre>
-          </div>
-        </div>
-
-        <div class="rounded-2xl border border-slate-200 bg-white p-6">
-          <h3 class="font-semibold">FAQ</h3>
-          <div class="mt-4 space-y-3 text-sm text-slate-600">
-            <div>
-              <div class="font-semibold text-slate-900">Why admin privileges?</div>
-              <div>Raw packet scanning may require elevated permissions.</div>
-            </div>
-            <div>
-              <div class="font-semibold text-slate-900">Where fingerprints?</div>
-              <div>Stored under <span class="font-mono">data/</span>.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="border-t border-slate-200 bg-white">
-    <div class="mx-auto max-w-6xl px-4 py-10 text-sm text-slate-600 flex flex-col gap-2 sm:flex-row sm:justify-between">
-      <span>© W_NETVISUS</span>
-      <span>Built for GitHub Pages (no build step)</span>
+  <footer>
+    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
+      <div>© W_NETVISUS — Website foundation (Practice 7)</div>
+      <div>Wireshark-like structure • Gold theme • No build step</div>
     </div>
   </footer>
 </body>
