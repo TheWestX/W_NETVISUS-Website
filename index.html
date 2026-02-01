@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="w_netvisus">
+<html lang="ru" data-theme="w_netvisus">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,17 +8,16 @@
   <meta name="description" content="W_NETVISUS — modern network scanner with a 3D-like network map and visual SONAR. Raw TCP SYN/UDP scanning via C-extension, OS/service fingerprints, modern PyQt5 GUI." />
   <meta name="theme-color" content="#0B0705" />
 
-  <!-- Favicons (recommended small transparent PNGs) -->
+  <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
-  <!-- Fallback if you didn't create favicons yet -->
   <link rel="icon" href="./assets/logo.png" />
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- daisyUI (UI-kit) via CDN -->
+  <!-- daisyUI via CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/5.1.25/daisyui.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/5.1.25/themes.css" />
 
@@ -68,7 +67,7 @@
     }
 
     :root{
-      --hero0: #0B0705; /* warm charcoal */
+      --hero0: #0B0705;
       --hero1: #15100C;
       --hero2: #1C1510;
       --gold:  #C7A17A;
@@ -85,21 +84,18 @@
     }
 
     .topbar{
-        background: linear-gradient(
-            180deg,
-            rgba(11,7,5,.85),
-            rgba(11,7,5,.65)
-        );
-        border-bottom: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(11,7,5,.85), rgba(11,7,5,.65));
+      border-bottom: 1px solid rgba(255,255,255,.08);
     }
 
+    /* FIX 1: убрали "солнышко" справа — не делаем яркое пятно в правом верхнем углу */
     .hero-bg{
       position: relative;
       overflow: hidden;
       background:
-        radial-gradient(1100px 700px at 18% 10%, rgba(199,161,122,.20), transparent 62%),
-        radial-gradient(900px 620px at 82% 18%, rgba(199,161,122,.14), transparent 60%),
-        radial-gradient(900px 520px at 55% 110%, rgba(199,161,122,.06), transparent 60%),
+        radial-gradient(1100px 700px at 18% 10%, rgba(199,161,122,.18), transparent 62%),
+        radial-gradient(1000px 680px at 78% 22%, rgba(199,161,122,.07), transparent 62%),
+        radial-gradient(900px 520px at 55% 110%, rgba(199,161,122,.05), transparent 60%),
         linear-gradient(180deg, var(--hero2), var(--hero0));
       border-bottom: 1px solid rgba(255,255,255,.08);
     }
@@ -118,14 +114,15 @@
 
     .anchor{scroll-margin-top:96px}
 
-    /* Force primary buttons to be gold */
+    /* Primary buttons = gold */
     .btn.btn-primary{
-      background: linear-gradient(180deg, rgba(225,195,154,.85), rgba(199,161,122,.75));
+      background: linear-gradient(180deg, rgba(225,195,154,.88), rgba(199,161,122,.78));
       border-color: rgba(199,161,122,.65);
       color: #1b130e;
+      box-shadow: 0 12px 30px rgba(0,0,0,.28) !important;
     }
     .btn.btn-primary:hover{
-      background: linear-gradient(180deg, rgba(225,195,154,.95), rgba(199,161,122,.82));
+      background: linear-gradient(180deg, rgba(225,195,154,.96), rgba(199,161,122,.85));
       transform: translateY(-1px);
     }
     .btn.btn-outline.gold{
@@ -135,6 +132,23 @@
     .btn.btn-outline.gold:hover{
       background: rgba(255,255,255,.10);
       border-color: rgba(225,195,154,.40);
+    }
+
+    /* FIX 2: убрали фиолетовый ring/outline у кнопок (daisyUI/tailwind ring) */
+    .btn,
+    .btn:focus,
+    .btn:focus-visible,
+    .btn:active{
+      outline: none !important;
+      box-shadow: none !important;
+      --tw-ring-shadow: 0 0 #0000 !important;
+      --tw-ring-offset-shadow: 0 0 #0000 !important;
+      --tw-ring-color: transparent !important;
+      --tw-ring-offset-color: transparent !important;
+    }
+    /* но для primary возвращаем нужную тень (не ring) */
+    .btn.btn-primary{
+      box-shadow: 0 12px 30px rgba(0,0,0,.28) !important;
     }
 
     .logo-art{
@@ -150,9 +164,9 @@
       width:min(560px, 80vw);
       height:min(560px, 80vw);
       border-radius:999px;
-      background: radial-gradient(circle at 50% 50%, rgba(199,161,122,.22), transparent 62%);
+      background: radial-gradient(circle at 50% 50%, rgba(199,161,122,.18), transparent 62%);
       filter: blur(2px);
-      opacity:.95;
+      opacity:.85;
     }
     .logo-art img{
       width:min(520px, 86%);
@@ -163,7 +177,6 @@
       transform: rotate(-2deg);
     }
 
-    /* Not plain white */
     .below{
       background:
         radial-gradient(900px 520px at 12% 0%, rgba(199,161,122,.10), transparent 60%),
@@ -176,8 +189,7 @@
       position:absolute; inset:0;
       pointer-events:none;
       opacity:.25;
-      background-image:
-        radial-gradient(circle at 10px 10px, rgba(17,24,39,.16) 1px, transparent 1px);
+      background-image: radial-gradient(circle at 10px 10px, rgba(17,24,39,.16) 1px, transparent 1px);
       background-size: 52px 52px;
       mask-image: linear-gradient(180deg, black 0%, black 55%, transparent 100%);
     }
@@ -204,6 +216,12 @@
       color: rgba(255,255,255,.95);
       background: rgba(255,255,255,.06);
     }
+    /* активный пункт меню */
+    .navlink.is-active{
+      color: rgba(255,255,255,.96);
+      background: rgba(199,161,122,.18);
+      border: 1px solid rgba(199,161,122,.25);
+    }
 
     .footerline{ border-top: 1px solid rgba(15,23,42,.10); }
 
@@ -219,28 +237,17 @@
     .steps .step-primary::before {
       background-color: var(--gold) !important;
     }
-
-    .btn:focus,
-    .btn:focus-visible,
-    .btn:active {
-      outline: none !important;
-      box-shadow: none !important;
-    }
-
-    .btn.btn-primary{
-      box-shadow: 0 12px 30px rgba(0,0,0,.28) !important;
-    }
   </style>
 </head>
 
-<body class="min-h-screen">
+<body class="min-h-screen" data-page="home">
 
   <!-- Top announcement bar -->
   <div class="w-full topbar">
     <div class="mx-auto max-w-6xl px-4 py-2 relative">
       <div class="text-center text-xs sm:text-sm text-white/80">
         <b class="text-white">W_NETVISUS</b> is in active development.
-        Read the <a class="link link-hover" style="color:var(--gold2)" href="#documentation">Quick Start</a>
+        Read the <a class="link link-hover" style="color:var(--gold2)" href="faq.html">FAQ</a>
         or check <a class="link link-hover" style="color:var(--gold2)" href="#download">releases</a>.
       </div>
     </div>
@@ -252,7 +259,7 @@
       <div class="navbar px-0">
 
         <div class="navbar-start gap-3">
-          <a href="#top" class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3">
             <img src="./assets/logo.png" alt="W_NETVISUS logo" class="h-10 w-10 object-contain" />
             <div class="leading-tight">
               <div class="font-extrabold tracking-wide text-white">W_NETVISUS</div>
@@ -263,31 +270,22 @@
 
         <div class="navbar-center hidden lg:flex">
           <ul class="menu menu-horizontal px-1 gap-1">
-            <li><a class="navlink rounded-xl" href="#download">Download</a></li>
-            <li><a class="navlink rounded-xl" href="#documentation">Documentation</a></li>
-            <li><a class="navlink rounded-xl" href="#learn">Learn</a></li>
-            <li><a class="navlink rounded-xl" href="#resources">Resources</a></li>
-            <li><a class="navlink rounded-xl" href="#tools">Tools</a></li>
-            <li><a class="navlink rounded-xl" href="#community">Community</a></li>
-            <li><a class="navlink rounded-xl" href="#develop">Develop</a></li>
+            <li><a class="navlink rounded-xl" data-nav="home" href="index.html">Главная</a></li>
+            <li><a class="navlink rounded-xl" data-nav="contacts" href="contacts.html">Контакты / Отзывы</a></li>
+            <li><a class="navlink rounded-xl" data-nav="faq" href="faq.html">FAQ</a></li>
           </ul>
         </div>
 
         <div class="navbar-end gap-2">
           <a href="#download" class="btn btn-primary btn-sm sm:btn-md">Download</a>
-          <a href="#support" class="btn btn-outline gold btn-sm sm:btn-md">Support</a>
+          <a href="contacts.html" class="btn btn-outline gold btn-sm sm:btn-md">Contact</a>
 
           <div class="dropdown dropdown-end lg:hidden">
             <label tabindex="0" class="btn btn-ghost btn-sm text-white hover:bg-white/10">Menu</label>
-            <ul tabindex="0" class="menu dropdown-content mt-3 p-2 shadow bg-[#110C09]/95 border border-white/10 rounded-2xl w-56">
-              <li><a class="text-white/85 hover:text-white" href="#download">Download</a></li>
-              <li><a class="text-white/85 hover:text-white" href="#documentation">Documentation</a></li>
-              <li><a class="text-white/85 hover:text-white" href="#learn">Learn</a></li>
-              <li><a class="text-white/85 hover:text-white" href="#resources">Resources</a></li>
-              <li><a class="text-white/85 hover:text-white" href="#tools">Tools</a></li>
-              <li><a class="text-white/85 hover:text-white" href="#community">Community</a></li>
-              <li><a class="text-white/85 hover:text-white" href="#develop">Develop</a></li>
-              <li><a class="text-white/85 hover:text-white" href="#support">Support</a></li>
+            <ul tabindex="0" class="menu dropdown-content mt-3 p-2 shadow bg-[#110C09]/95 border border-white/10 rounded-2xl w-72">
+              <li><a class="text-white/85 hover:text-white" data-nav="home" href="index.html">Главная</a></li>
+              <li><a class="text-white/85 hover:text-white" data-nav="contacts" href="contacts.html">Контакты / Отзывы</a></li>
+              <li><a class="text-white/85 hover:text-white" data-nav="faq" href="faq.html">FAQ</a></li>
             </ul>
           </div>
         </div>
@@ -319,7 +317,7 @@
 
           <div class="mt-8 flex flex-wrap gap-3">
             <a href="#download" class="btn btn-primary">Download Now</a>
-            <a href="#documentation" class="btn btn-outline gold">Documentation</a>
+            <a href="faq.html" class="btn btn-outline gold">FAQ</a>
           </div>
 
           <div class="mt-4 text-xs text-white/55">
@@ -360,7 +358,7 @@
       <div id="download" class="anchor"></div>
       <h2 class="section-title text-4xl font-extrabold tracking-tight text-slate-900">Download</h2>
       <p class="mt-2 muted-light max-w-2xl">
-        Latest stable releases. For Practice 7 it’s okay to keep placeholders — later you’ll link GitHub Releases.
+        Latest stable releases. Сейчас можно оставить заглушки — позже привяжешь GitHub Releases.
       </p>
 
       <div class="mt-8 grid gap-4 md:grid-cols-3">
@@ -379,61 +377,37 @@
 
         <div class="card paper-card">
           <div class="card-body">
-            <h3 class="card-title text-base">License</h3>
-            <p class="text-slate-600">Usage and distribution terms.</p>
+            <h3 class="card-title text-base">Документация</h3>
+            <p class="text-slate-600">Смотри FAQ и Quick Start.</p>
             <div class="card-actions mt-3">
-              <a class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50" href="#license">View</a>
+              <a class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50" href="faq.html">Открыть FAQ</a>
             </div>
           </div>
         </div>
 
         <div class="card paper-card">
           <div class="card-body">
-            <h3 class="card-title text-base">System Requirements</h3>
-            <p class="text-slate-600">Python 3.9+, PyQt5, netifaces, optional C compiler.</p>
+            <h3 class="card-title text-base">Связаться</h3>
+            <p class="text-slate-600">Оставь отзыв или вопрос.</p>
             <div class="card-actions mt-3">
-              <a class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50" href="#requirements">View</a>
+              <a class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50" href="contacts.html">Контакты</a>
             </div>
           </div>
         </div>
       </div>
 
-      <div id="license" class="anchor mt-10"></div>
-      <div class="card paper-card">
-        <div class="card-body">
-          <h3 class="card-title text-base">License (placeholder)</h3>
-          <p class="text-slate-600">
-            Add final license text/link later (MIT / proprietary / etc.).
-          </p>
-        </div>
-      </div>
-
-      <div id="requirements" class="anchor mt-4"></div>
-      <div class="card paper-card">
-        <div class="card-body">
-          <h3 class="card-title text-base">System Requirements</h3>
-          <ul class="mt-2 list-disc pl-5 text-slate-600 space-y-1">
-            <li>Python 3.9+ (recommended)</li>
-            <li>PyQt5</li>
-            <li>netifaces (interface IP discovery)</li>
-            <li>Raw scanning may require elevated permissions (sudo/admin)</li>
-            <li>(Optional) C compiler to build <code>core/raw_scan.c</code></li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- DOCUMENTATION -->
+      <!-- QUICK START -->
       <div id="documentation" class="anchor mt-14"></div>
-      <h2 class="section-title text-4xl font-extrabold tracking-tight text-slate-900">Documentation</h2>
+      <h2 class="section-title text-4xl font-extrabold tracking-tight text-slate-900">Quick Start</h2>
       <p class="mt-2 muted-light max-w-2xl">
-        Real Quick Start based on your repository structure (PyQt5 GUI entry point + raw scan extension + fingerprints).
+        Быстрый старт (пример под Linux/macOS). Команды — заглушка под твою структуру.
       </p>
 
       <div class="mt-8 grid gap-4 lg:grid-cols-3">
         <div class="lg:col-span-2 card paper-card">
           <div class="card-body">
             <div class="flex items-start justify-between gap-4 flex-wrap">
-              <h3 class="card-title text-base">Quick Start</h3>
+              <h3 class="card-title text-base">Запуск</h3>
               <div class="badge badge-outline border-slate-300 text-slate-700">Linux/macOS example</div>
             </div>
 
@@ -470,316 +444,17 @@ sudo PYTHONPATH=. python3 python_wrapper/scanner_gui_modern.py</pre>
 
         <div class="card paper-card">
           <div class="card-body">
-            <h3 class="card-title text-base">What you get</h3>
-
-            <div class="mt-3 flex flex-wrap gap-2">
-              <span class="tag badge text-slate-700">Raw TCP SYN</span>
-              <span class="tag badge text-slate-700">UDP probing</span>
-              <span class="tag badge text-slate-700">Fingerprints</span>
-              <span class="tag badge text-slate-700">SONAR</span>
-              <span class="tag badge text-slate-700">3D map</span>
-              <span class="tag badge text-slate-700">PyQt5 GUI</span>
-            </div>
-
-            <div class="mt-4 space-y-2 text-slate-700">
-              <div class="flex items-start gap-2">
-                <span class="mt-1 inline-block h-2 w-2 rounded-full" style="background:var(--gold)"></span>
-                <div>
-                  <div class="font-semibold">Raw scanning engine</div>
-                  <div class="text-sm text-slate-600">Fast probing via C-extension core.</div>
-                </div>
-              </div>
-
-              <div class="flex items-start gap-2">
-                <span class="mt-1 inline-block h-2 w-2 rounded-full" style="background:var(--gold)"></span>
-                <div>
-                  <div class="font-semibold">OS & service detection</div>
-                  <div class="text-sm text-slate-600">Fingerprint matching from <code>data/</code>.</div>
-                </div>
-              </div>
-
-              <div class="flex items-start gap-2">
-                <span class="mt-1 inline-block h-2 w-2 rounded-full" style="background:var(--gold)"></span>
-                <div>
-                  <div class="font-semibold">Visual analytics</div>
-                  <div class="text-sm text-slate-600">3D-like map + SONAR widget inside the GUI.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-5">
-              <a href="#learn" class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50">Learn more</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- LEARN -->
-      <div id="learn" class="anchor mt-14"></div>
-      <h2 class="section-title text-4xl font-extrabold tracking-tight text-slate-900">Learn</h2>
-      <p class="mt-2 muted-light max-w-2xl">
-        What W_NETVISUS does in real networks: discover exposed services, validate reachability, and visualize host activity.
-      </p>
-
-      <div class="mt-8 grid gap-4 lg:grid-cols-3">
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Typical use cases</h3>
-            <ul class="mt-2 list-disc pl-5 text-slate-600 space-y-1">
-              <li>Inventory exposed services on a subnet</li>
-              <li>Check firewall rules (open / filtered / closed)</li>
-              <li>Quick triage: who is alive and what is listening</li>
-              <li>Visual overview via 3D map + SONAR</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">How it works (high level)</h3>
-            <ol class="steps steps-vertical text-slate-700">
-              <li class="step step-primary">Discover targets (interfaces / IPs)</li>
-              <li class="step step-primary">Scan TCP/UDP (raw C core)</li>
-              <li class="step step-primary">Detect OS/service (fingerprints)</li>
-              <li class="step step-primary">Render results (PyQt5 GUI + SONAR + map)</li>
-            </ol>
-            <div class="mt-3 text-xs text-slate-500">
-              Architecture stays stable even when UI evolves.
-            </div>
-          </div>
-        </div>
-
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">FAQ</h3>
-
-            <div class="space-y-2 mt-2">
-              <div class="collapse collapse-arrow bg-white/70 border border-slate-200 rounded-2xl">
-                <input type="checkbox" />
-                <div class="collapse-title text-sm font-semibold text-slate-900">
-                  Why do I need sudo/admin?
-                </div>
-                <div class="collapse-content text-sm text-slate-600">
-                  Raw packet operations can require elevated privileges depending on OS policy and scan mode.
-                </div>
-              </div>
-
-              <div class="collapse collapse-arrow bg-white/70 border border-slate-200 rounded-2xl">
-                <input type="checkbox" />
-                <div class="collapse-title text-sm font-semibold text-slate-900">
-                  Why is a port “filtered”?
-                </div>
-                <div class="collapse-content text-sm text-slate-600">
-                  A firewall/ACL may drop probes or block replies, so the scanner can’t confirm open/closed reliably.
-                </div>
-              </div>
-
-              <div class="collapse collapse-arrow bg-white/70 border border-slate-200 rounded-2xl">
-                <input type="checkbox" />
-                <div class="collapse-title text-sm font-semibold text-slate-900">
-                  Is OS detection always accurate?
-                </div>
-                <div class="collapse-content text-sm text-slate-600">
-                  It depends on fingerprint coverage and network conditions — treat it as best-effort.
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- RESOURCES -->
-      <div id="resources" class="anchor mt-14"></div>
-      <h2 class="section-title text-4xl font-extrabold tracking-tight text-slate-900">Resources</h2>
-      <p class="mt-2 muted-light max-w-2xl">
-        Links you’ll connect when the repo and releases are finalized.
-      </p>
-
-      <div class="mt-8 grid gap-4 md:grid-cols-3">
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Repository</h3>
-            <p class="text-slate-600">Source code, issues, roadmap.</p>
-            <div class="mt-3">
-              <a class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50" href="#">
-                Open GitHub (placeholder)
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Changelog</h3>
-            <p class="text-slate-600">Release notes and changes.</p>
-            <ul class="mt-2 text-slate-600 space-y-1">
-              <li><b>v0.1</b> — GUI + scanner foundation</li>
-              <li><b>v0.2</b> — docs & packaging (planned)</li>
-              <li><b>v1.0</b> — public release (planned)</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Downloads</h3>
-            <p class="text-slate-600">Link to GitHub Releases when ready.</p>
-            <div class="mt-3">
-              <a class="btn btn-sm btn-primary" href="#download">Go to Download</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TOOLS -->
-      <div id="tools" class="anchor mt-14"></div>
-      <h2 class="section-title text-4xl font-extrabold tracking-tight text-slate-900">Tools</h2>
-      <p class="mt-2 muted-light max-w-2xl">
-        Planned utilities around scanning and reporting (expand later without changing the skeleton).
-      </p>
-
-      <div class="mt-8 grid gap-4 lg:grid-cols-3">
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Export formats</h3>
-            <p class="text-slate-600">CSV / JSON export of scan results for reporting.</p>
-            <div class="mt-3 text-xs text-slate-500">Planned</div>
-          </div>
-        </div>
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Scan presets</h3>
-            <p class="text-slate-600">Common port sets, timing profiles, retries.</p>
-            <div class="mt-3 text-xs text-slate-500">Planned</div>
-          </div>
-        </div>
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Profiles</h3>
-            <p class="text-slate-600">Save targets + settings + UI layout.</p>
-            <div class="mt-3 text-xs text-slate-500">Planned</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- COMMUNITY -->
-      <div id="community" class="anchor mt-14"></div>
-      <h2 class="section-title text-4xl font-extrabold tracking-tight text-slate-900">Community</h2>
-      <p class="mt-2 muted-light max-w-2xl">
-        Where users can ask questions and send feedback (fill with real links later).
-      </p>
-
-      <div class="mt-8 grid gap-4 md:grid-cols-3">
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Issues</h3>
-            <p class="text-slate-600">Bug reports, feature requests, roadmap items.</p>
-            <div class="mt-3">
-              <a class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50" href="#">
-                GitHub Issues (placeholder)
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Discussions</h3>
-            <p class="text-slate-600">Q&A, usage tips, configuration ideas.</p>
-            <div class="mt-3">
-              <a class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50" href="#">
-                GitHub Discussions (placeholder)
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Updates</h3>
-            <p class="text-slate-600">Announcements and release notifications.</p>
-            <div class="mt-3">
-              <a class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50" href="#">
-                Telegram/Discord (placeholder)
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DEVELOP -->
-      <div id="develop" class="anchor mt-14"></div>
-      <h2 class="section-title text-4xl font-extrabold tracking-tight text-slate-900">Develop</h2>
-      <p class="mt-2 muted-light max-w-2xl">
-        Notes for contributors: build steps, extension compilation, packaging (safe placeholders for Practice 7).
-      </p>
-
-      <div class="mt-8 grid gap-4 lg:grid-cols-2">
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Build the C extension (optional)</h3>
+            <h3 class="card-title text-base">Дальше</h3>
             <p class="text-slate-600">
-              If you need to rebuild raw scanning code, use your OS compiler toolchain.
-              Exact steps will depend on how your repo wires the extension (setup.py / makefile / manual compile).
+              Для практики 8 важно: многостраничность, общие header/footer, FAQ (аккордеон), 404.
             </p>
-            <div class="mt-4">
-              <div class="text-xs font-semibold text-slate-500">Placeholder example</div>
-              <pre class="codeblock mt-2 rounded-2xl p-4 overflow-auto text-xs leading-relaxed"># Example only (adapt to your repo)
-gcc -O2 -shared -fPIC core/raw_scan.c -o core/raw_scan.so</pre>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <a href="faq.html" class="btn btn-sm btn-primary">FAQ</a>
+              <a href="contacts.html" class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50">Контакты</a>
+              <a href="404.html" class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50">404</a>
             </div>
-          </div>
-        </div>
-
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Contributing</h3>
-            <ul class="mt-2 list-disc pl-5 text-slate-600 space-y-1">
-              <li>Keep PRs small and focused</li>
-              <li>Add/extend fingerprints in <code>data/</code> when possible</li>
-              <li>Prefer readable output + consistent UI</li>
-              <li>Document new CLI/GUI options</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- SUPPORT -->
-      <div id="support" class="anchor mt-14"></div>
-      <h2 class="section-title text-4xl font-extrabold tracking-tight text-slate-900">Support</h2>
-      <p class="mt-2 muted-light max-w-2xl">
-        Contact and help channels (update later with real data).
-      </p>
-
-      <div class="mt-8 grid gap-4 lg:grid-cols-3">
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Email</h3>
-            <p class="text-slate-600">Direct communication.</p>
-            <div class="mt-3">
-              <span class="badge badge-outline border-slate-300 text-slate-700">your-email@example.com</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">Security</h3>
-            <p class="text-slate-600">
-              Report vulnerabilities privately (recommended).
-            </p>
-            <div class="mt-3 text-xs text-slate-500">
-              Add a SECURITY.md later.
-            </div>
-          </div>
-        </div>
-
-        <div class="card paper-card">
-          <div class="card-body">
-            <h3 class="card-title text-base">FAQ / Docs</h3>
-            <p class="text-slate-600">Start with the Quick Start section.</p>
-            <div class="mt-3">
-              <a class="btn btn-sm btn-primary" href="#documentation">Open Docs</a>
+            <div class="mt-4 text-xs text-slate-500">
+              Проверь на GitHub Pages: переходы по меню, ссылки футера, форма контактов, 404 на несуществующем URL.
             </div>
           </div>
         </div>
@@ -787,15 +462,15 @@ gcc -O2 -shared -fPIC core/raw_scan.c -o core/raw_scan.so</pre>
 
       <div class="mt-12 flex flex-wrap items-center justify-between gap-3">
         <div class="text-xs text-slate-500">
-          Tip: for a perfect logo look, export <b>transparent PNG</b> + generate real favicons.
+          Tip: экспортируй логотип в <b>transparent PNG</b> и сделай реальные favicons.
         </div>
-        <a href="#top" class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50">Back to top</a>
+        <a href="#top" class="btn btn-sm btn-outline border-slate-300 text-slate-900 hover:bg-slate-50">Наверх</a>
       </div>
 
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- Footer (единый для всех страниц) -->
   <footer class="footerline bg-white">
     <div class="mx-auto max-w-6xl px-4 py-10">
       <div class="grid gap-6 md:grid-cols-3">
@@ -808,29 +483,28 @@ gcc -O2 -shared -fPIC core/raw_scan.c -o core/raw_scan.so</pre>
             </div>
           </div>
           <p class="mt-4 text-sm text-slate-600">
-            Documentation-first website for Practice work. Designed in warm charcoal + gold.
+            Multi-page practice website (P8). Warm charcoal + gold.
           </p>
         </div>
 
         <div>
-          <div class="font-bold text-slate-900">Navigation</div>
+          <div class="font-bold text-slate-900">Навигация</div>
           <ul class="mt-3 space-y-2 text-sm text-slate-600">
-            <li><a class="link link-hover" href="#download">Download</a></li>
-            <li><a class="link link-hover" href="#documentation">Documentation</a></li>
-            <li><a class="link link-hover" href="#learn">Learn</a></li>
-            <li><a class="link link-hover" href="#resources">Resources</a></li>
+            <li><a class="link link-hover" href="index.html">Главная</a></li>
+            <li><a class="link link-hover" href="contacts.html">Контакты / Отзывы</a></li>
+            <li><a class="link link-hover" href="faq.html">FAQ</a></li>
           </ul>
         </div>
 
         <div>
-          <div class="font-bold text-slate-900">Tech</div>
+          <div class="font-bold text-slate-900">Тех</div>
           <ul class="mt-3 space-y-2 text-sm text-slate-600">
             <li>Tailwind (CDN) + daisyUI (CDN)</li>
-            <li>No build step — GitHub Pages ready</li>
-            <li>Theme: gold primary (forced)</li>
+            <li>Единый UI на всех страницах</li>
+            <li>GitHub Pages ready</li>
           </ul>
           <div class="mt-4">
-            <span class="badge badge-outline border-slate-300 text-slate-700">Practice website</span>
+            <span class="badge badge-outline border-slate-300 text-slate-700">Practice 8</span>
           </div>
         </div>
       </div>
@@ -841,6 +515,16 @@ gcc -O2 -shared -fPIC core/raw_scan.c -o core/raw_scan.so</pre>
       </div>
     </div>
   </footer>
+
+  <script>
+    // Active menu highlight for all pages
+    (function () {
+      const page = document.body.getAttribute("data-page");
+      document.querySelectorAll("[data-nav]").forEach(a => {
+        if (a.getAttribute("data-nav") === page) a.classList.add("is-active");
+      });
+    })();
+  </script>
 
 </body>
 </html>
